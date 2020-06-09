@@ -15,46 +15,46 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="StringHelpers.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
     <ClCompile Include="Zaxxon2020.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\SpaceInvaders\Entity.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\SpaceInvaders\EntityManager.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\SpaceInvaders\Game.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\SpaceInvaders\pch.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\SpaceInvaders\StringHelpers.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\SpaceInvaders\Weapon.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\SpaceInvaders\Entity.h">
-      <Filter>Fichiers sources</Filter>
+    <ClInclude Include="Entity.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\SpaceInvaders\EntityManager.h">
-      <Filter>Fichiers sources</Filter>
+    <ClInclude Include="EntityManager.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\SpaceInvaders\Game.h">
-      <Filter>Fichiers sources</Filter>
+    <ClInclude Include="Game.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\SpaceInvaders\pch.h">
-      <Filter>Fichiers sources</Filter>
+    <ClInclude Include="pch.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\SpaceInvaders\StringHelpers.h">
-      <Filter>Fichiers sources</Filter>
+    <ClInclude Include="StringHelpers.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\SpaceInvaders\Weapon.h">
-      <Filter>Fichiers sources</Filter>
+    <ClInclude Include="Weapon.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

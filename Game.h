@@ -1,9 +1,9 @@
 #pragma once
 #include "Weapon.h"
 
-#define SPRITE_COUNT_X 11
-#define SPRITE_COUNT_Y 5
-#define BLOCK_COUNT 4
+#define SPRITE_COUNT 20
+#define BLOCK_COUNT 1
+#define MAX_WEAPON_FIRE 3
 
 class Game
 {
@@ -37,6 +37,8 @@ private:
 	void HandleCollisionWeaponBlock();
 	void HandleCollisionWeaponEnemy();
 	void HandleCollisionWeaponEnemyMaster();
+	void HandleCollisionEnemyPlayer();
+	void HandleCollisionEnemymasterPlayer();
 	void HandleGameOver();
 	void DisplayGameOver();
 	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
@@ -56,6 +58,7 @@ private:
 	int _lives = 3;
 	sf::Text	_ScoreText;
 	int _score = 0;
+	int _countPlayerWeaponFired = 0;
 
 	std::size_t	mStatisticsNumFrames;
 	bool mIsMovingUp;
@@ -65,11 +68,10 @@ private:
 
 	bool _IsGameOver = false;
 	bool _IsEnemyWeaponFired = false;
-	bool _IsPlayerWeaponFired = false;
 	bool _IsEnemyMasterWeaponFired = false;
 
 	sf::Texture	_TextureEnemy;
-	sf::Sprite	_Enemy[SPRITE_COUNT_X][SPRITE_COUNT_Y];
+	sf::Sprite	_Enemy[SPRITE_COUNT];
 	sf::Texture	_TextureBlock;
 	sf::Sprite	_Block[BLOCK_COUNT];
 	sf::Texture	_TextureWeapon;
