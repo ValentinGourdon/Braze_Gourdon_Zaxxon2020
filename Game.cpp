@@ -3,7 +3,7 @@
 #include "Game.h"
 #include "EntityManager.h"
 
-const float Game::PlayerSpeed = 100.f;
+const float Game::PlayerSpeed = 150.f;
 const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Game::Game()
@@ -21,13 +21,13 @@ Game::Game()
 {
 	mWindow.setFramerateLimit(160);
 
-	_TextureWeapon.loadFromFile("Media/Textures/SI_WeaponGreen.png");
-	_TextureWeaponEnemy.loadFromFile("Media/Textures/SI_WeaponYellow.png");
-	_TextureWeaponEnemyMaster.loadFromFile("Media/Textures/SI_WeaponRed.png");
+	_TextureWeapon.loadFromFile("Media/Textures/SI_WeaponGreen_horizontal.png");
+	_TextureWeaponEnemy.loadFromFile("Media/Textures/SI_WeaponYellow_horizontal.png");
+	_TextureWeaponEnemyMaster.loadFromFile("Media/Textures/SI_WeaponRed_horizontal.png");
 	mTexture.loadFromFile("Media/Textures/starfox_ship.png");
-	_TextureEnemyMaster.loadFromFile("Media/Textures/SI_EnemyMaster.png");
-	_TextureEnemy.loadFromFile("Media/Textures/SI_Enemy.png");
-	_TextureBlock.loadFromFile("Media/Textures/SI_Block.png");
+	_TextureEnemyMaster.loadFromFile("Media/Textures/ennemy_1.png");
+	_TextureEnemy.loadFromFile("Media/Textures/ennemy_2.png");
+	_TextureBlock.loadFromFile("Media/Textures/canon_2.png");
 	mFont.loadFromFile("Media/Sansation.ttf");
 
 	InitSprites();
@@ -72,8 +72,8 @@ void Game::InitSprites()
 	// Enemy Master
 	//
 
-	/*_EnemyMaster.setTexture(_TextureEnemyMaster);
-	_EnemyMaster.setPosition(100.f + 50.f, 1.f);
+	_EnemyMaster.setTexture(_TextureEnemyMaster);
+	_EnemyMaster.setPosition(700.f, 100.f);
 	std::shared_ptr<Entity> sem = std::make_shared<Entity>();
 	sem->m_sprite = _EnemyMaster;
 	sem->m_type = EntityType::enemyMaster;
@@ -85,7 +85,18 @@ void Game::InitSprites()
 	// Enemies
 	//
 
-	for (int i = 0; i < SPRITE_COUNT_X; i++)
+	_Enemy[0][0].setTexture(_TextureEnemy);
+	_Enemy[0][0].setPosition(600.f, 100.f);
+
+	std::shared_ptr<Entity> se = std::make_shared<Entity>();
+	se->m_sprite = _Enemy[0][0];
+	se->m_type = EntityType::enemy;
+	se->m_size = _TextureEnemy.getSize();
+	se->m_position = _Enemy[0][0].getPosition();
+	EntityManager::m_Entities.push_back(se);
+
+
+	/*for (int i = 0; i < SPRITE_COUNT_X; i++)
 	{
 		for (int j = 0; j < SPRITE_COUNT_Y; j++)
 		{
@@ -117,6 +128,16 @@ void Game::InitSprites()
 		sb->m_position = _Block[i].getPosition();
 		EntityManager::m_Entities.push_back(sb);
 	}*/
+
+	_Block[0].setTexture(_TextureBlock);
+	_Block[0].setPosition(600, 550.f);
+
+	std::shared_ptr<Entity> sb = std::make_shared<Entity>();
+	sb->m_sprite = _Block[0];
+	sb->m_type = EntityType::block;
+	sb->m_size = _TextureBlock.getSize();
+	sb->m_position = _Block[0].getPosition();
+	EntityManager::m_Entities.push_back(sb);
 
 	mStatisticsText.setFont(mFont);
 	mStatisticsText.setPosition(5.f, 5.f);
@@ -313,7 +334,6 @@ void Game::HandleCollisionEnemyMasterWeaponPlayer()
 			weapon->m_enabled = false;
 			_IsEnemyMasterWeaponFired = false; 
 			_lives--;
-			//break;
 			goto end;
 		}
 	}
@@ -340,9 +360,9 @@ void Game::HanldeEnemyMasterWeaponMoves()
 		float x, y;
 		x = entity->m_sprite.getPosition().x;
 		y = entity->m_sprite.getPosition().y;
-		y++;
+		x -= 4;
 
-		if (y >= 600)
+		if (x <= 0)
 		{
 			entity->m_enabled = false;
 			_IsEnemyMasterWeaponFired = false;
@@ -352,36 +372,7 @@ void Game::HanldeEnemyMasterWeaponMoves()
 	}
 }
 
-void Game::HandleEnemyMasterWeaponFiring()
-{
-	/*if (_IsEnemyMasterWeaponFired == true)
-		return;
 
-	if (EntityManager::GetEnemyMaster()->m_enabled == false)
-		return;
-
-	// a little random...
-	int r = rand() % 50;
-	if (r != 10)
-		return;
-
-	float x, y;
-	x = EntityManager::GetEnemyMaster()->m_sprite.getPosition().x;
-	y = EntityManager::GetEnemyMaster()->m_sprite.getPosition().y;
-	y--;
-
-	std::shared_ptr<Entity> sw = std::make_shared<Entity>();
-	sw->m_sprite.setTexture(_TextureWeaponEnemyMaster);
-
-	sw->m_sprite.setPosition(
-		x + _TextureEnemyMaster.getSize().x / 2,
-		y + _TextureEnemyMaster.getSize().y);
-	sw->m_type = EntityType::enemyMasterWeapon;
-	sw->m_size = _TextureWeaponEnemyMaster.getSize();
-	EntityManager::m_Entities.push_back(sw);
-
-	_IsEnemyMasterWeaponFired = true;*/
-}
 
 void Game::HandleCollisionEnemyMasterWeaponBlock()
 {
@@ -430,48 +421,7 @@ end2:
 	return;
 }
 
-void Game::HandleEnemyMasterMove()
-{
-	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
-	{
-		if (entity->m_enabled == false)
-		{
-			continue;
-		}
 
-		if (entity->m_type != EntityType::enemyMaster)
-		{
-			continue;
-		}
-
-		float x, y;
-		x = entity->m_sprite.getPosition().x;
-		y = entity->m_sprite.getPosition().y;
-
-		if (entity->m_bLeftToRight == true)
-			x = x + 0.5f;
-		else
-			x = x - 0.5f;
-
-		entity->m_times++;
-
-		if (x >= ((BLOCK_COUNT) * 150) || x <= 150)
-		{
-			if (entity->m_bLeftToRight == true)
-			{
-				entity->m_bLeftToRight = false;
-				entity->m_times = 0;
-			}
-			else
-			{
-				entity->m_bLeftToRight = true;
-				entity->m_times = 0;
-			}
-		}
-
-		entity->m_sprite.setPosition(x, y);
-	}
-}
 
 void Game::HandleCollisionEnemyWeaponBlock()
 {
@@ -554,6 +504,8 @@ end:
 	return;
 }
 
+
+
 void Game::HanldeEnemyWeaponMoves()
 {
 	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
@@ -571,9 +523,9 @@ void Game::HanldeEnemyWeaponMoves()
 		float x, y;
 		x = entity->m_sprite.getPosition().x;
 		y = entity->m_sprite.getPosition().y;
-		y += 1.0f;
+		x -= 2.0f;
 
-		if (y >= 600)
+		if (x <= 0)
 		{
 			entity->m_enabled = false;
 			_IsEnemyWeaponFired = false;
@@ -583,6 +535,36 @@ void Game::HanldeEnemyWeaponMoves()
 			entity->m_sprite.setPosition(x, y);
 		}
 	}
+}
+
+void Game::HandleEnemyMasterWeaponFiring()
+{
+	if (_IsEnemyMasterWeaponFired == true)
+		return;
+
+	if (EntityManager::GetEnemyMaster()->m_enabled == false)
+		return;
+
+	// a little random...
+	int r = rand() % 50;
+	if (r != 10)
+		return;
+
+	float x, y;
+	x = EntityManager::GetEnemyMaster()->m_sprite.getPosition().x;
+	y = EntityManager::GetEnemyMaster()->m_sprite.getPosition().y;
+	y--;
+
+	std::shared_ptr<Entity> sw = std::make_shared<Entity>();
+	sw->m_sprite.setTexture(_TextureWeaponEnemyMaster);
+	sw->m_sprite.setPosition(
+		x + (_TextureEnemyMaster.getSize().x / 2) - 25,
+		y + _TextureEnemyMaster.getSize().y - 15);
+	sw->m_type = EntityType::enemyMasterWeapon;
+	sw->m_size = _TextureWeaponEnemyMaster.getSize();
+	EntityManager::m_Entities.push_back(sw);
+
+	_IsEnemyMasterWeaponFired = true;
 }
 
 void Game::HandleEnemyWeaponFiring()
@@ -606,9 +588,9 @@ void Game::HandleEnemyWeaponFiring()
 		}
 
 		// a little random...
-		int r = rand() % 20;
+		/*int r = rand() % 20;
 		if (r != 10)
-			continue;
+			continue;*/
 
 		float x, y;
 		x = entity->m_sprite.getPosition().x;
@@ -622,8 +604,8 @@ void Game::HandleEnemyWeaponFiring()
 			y + _TextureWeaponEnemy.getSize().y);
 
 		sw->m_sprite.setPosition(
-			entity->m_sprite.getPosition().x + _TextureEnemy.getSize().x / 2,
-			entity->m_sprite.getPosition().y - 10);
+			entity->m_sprite.getPosition().x - 15,
+			entity->m_sprite.getPosition().y + 18);
 
 		sw->m_type = EntityType::enemyWeapon;
 		sw->m_size = _TextureWeaponEnemy.getSize();
@@ -681,11 +663,56 @@ end3:
 	return;
 }
 
+void Game::HandleEnemyMasterMove()
+{
+	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
+	{
+		if (entity->m_enabled == false)
+		{
+			continue;
+		}
+
+		if (entity->m_type != EntityType::enemyMaster)
+		{
+			continue;
+		}
+
+		float x, y;
+		x = entity->m_sprite.getPosition().x;
+		y = entity->m_sprite.getPosition().y;
+
+		if (entity->m_bLeftToRight == true) {
+			y += 2;
+		}
+		else {
+			y -= 2;
+		}
+		entity->m_times += 2;
+
+		if (entity->m_times >= 400.0)
+		{
+			if (entity->m_bLeftToRight == true)
+			{
+				entity->m_bLeftToRight = false;
+				entity->m_times = 0;
+			}
+			else
+			{
+				entity->m_bLeftToRight = true;
+				entity->m_times = 0;
+			}
+		}
+
+		entity->m_sprite.setPosition(x, y);
+	}
+}
+
 void Game::HandleEnemyMoves()
 {
 	//
 	// Handle Enemy moves
 	//
+
 
 	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
 	{
@@ -702,14 +729,18 @@ void Game::HandleEnemyMoves()
 		float x, y;
 		x = entity->m_sprite.getPosition().x;
 		y = entity->m_sprite.getPosition().y;
-
-		if (entity->m_bLeftToRight == true)
-			x++;
-		else
-			x--;
+		
+		if (entity->m_bLeftToRight == true) {
+			y++;
+			x -= 0.2;
+		}
+		else {
+			y--;
+			x -= 0.2;
+		}
 		entity->m_times++;
 
-		if (entity->m_times >= 100) //0)
+		if (entity->m_times >= 400) //0)
 		{
 			if (entity->m_bLeftToRight == true)
 			{
@@ -749,9 +780,9 @@ void Game::HanldeWeaponMoves()
 		float x, y;
 		x = entity->m_sprite.getPosition().x;
 		y = entity->m_sprite.getPosition().y;
-		y--;
+		x += 3;
 
-		if (y <= 0)
+		if (x >= 840)
 		{
 			entity->m_enabled = false;
 			_IsPlayerWeaponFired = false;
@@ -989,8 +1020,8 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 		std::shared_ptr<Entity> sw = std::make_shared<Entity>();
 		sw->m_sprite.setTexture(_TextureWeapon);
 		sw->m_sprite.setPosition(
-			EntityManager::GetPlayer()->m_sprite.getPosition().x + EntityManager::GetPlayer()->m_sprite.getTexture()->getSize().x / 2,
-			EntityManager::GetPlayer()->m_sprite.getPosition().y - 10);
+			EntityManager::GetPlayer()->m_sprite.getPosition().x + 55,
+			EntityManager::GetPlayer()->m_sprite.getPosition().y + 25);
 		sw->m_type = EntityType::weapon;
 		sw->m_size = _TextureWeapon.getSize();
 		EntityManager::m_Entities.push_back(sw);
