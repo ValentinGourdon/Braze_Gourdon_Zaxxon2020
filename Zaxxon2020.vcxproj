@@ -18,6 +18,23 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="EntityManager.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="StringHelpers.cpp" />
+    <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="Zaxxon2020.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="StringHelpers.h" />
+    <ClInclude Include="Weapon.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{8A608494-AE19-4ABF-AD75-E05276414BDA}</ProjectGuid>
@@ -112,6 +129,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -150,23 +168,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\SpaceInvaders\Entity.cpp" />
-    <ClCompile Include="..\..\SpaceInvaders\EntityManager.cpp" />
-    <ClCompile Include="..\..\SpaceInvaders\Game.cpp" />
-    <ClCompile Include="..\..\SpaceInvaders\pch.cpp" />
-    <ClCompile Include="..\..\SpaceInvaders\StringHelpers.cpp" />
-    <ClCompile Include="..\..\SpaceInvaders\Weapon.cpp" />
-    <ClCompile Include="Zaxxon2020.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\SpaceInvaders\Entity.h" />
-    <ClInclude Include="..\..\SpaceInvaders\EntityManager.h" />
-    <ClInclude Include="..\..\SpaceInvaders\Game.h" />
-    <ClInclude Include="..\..\SpaceInvaders\pch.h" />
-    <ClInclude Include="..\..\SpaceInvaders\StringHelpers.h" />
-    <ClInclude Include="..\..\SpaceInvaders\Weapon.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

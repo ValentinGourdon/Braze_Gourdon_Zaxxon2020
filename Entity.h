@@ -4,11 +4,12 @@ enum EntityType
 {
 	player,
 	weapon,
-	enemyWeapon,
-	enemyMasterWeapon,
 	enemy,
+	enemyWeapon,
 	enemyMaster,
-	block
+	enemyMasterWeapon,
+	enemyCanon,
+	enemyCanonWeapon
 };
 
 class Entity
@@ -25,7 +26,7 @@ public:
 	bool m_enabled = true;
 
 	// Enemy only
-	bool m_bLeftToRight = true;
+	bool m_bTopToBottom = true;
 	int m_times = 0;
 };
 

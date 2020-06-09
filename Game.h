@@ -1,9 +1,9 @@
 #pragma once
 #include "Weapon.h"
 
-#define SPRITE_COUNT_X 11
-#define SPRITE_COUNT_Y 5
-#define BLOCK_COUNT 4
+#define SPRITE_COUNT 5
+#define CANON_COUNT 1
+#define MAX_WEAPON_FIRE 3
 
 class Game
 {
@@ -22,24 +22,28 @@ private:
 
 	void updateStatistics(sf::Time elapsedTime);
 	void HandleTexts();
-	void HandleCollisionEnemyMasterWeaponPlayer();
-	void HanldeEnemyMasterWeaponMoves();
-	void HandleEnemyMasterWeaponFiring();
-	void HandleCollisionEnemyMasterWeaponBlock();
-	void HandleEnemyMasterMove();
-	void HandleCollisionEnemyWeaponBlock();
-	void HandleCollisionWeaponPlayer();
-	void HanldeEnemyWeaponMoves();
-	void HandleEnemyWeaponFiring();
-	void HandleCollisionBlockEnemy();
-	void HandleEnemyMoves();
-	void HanldeWeaponMoves();
-	void HandleCollisionWeaponBlock();
 	void HandleCollisionWeaponEnemy();
 	void HandleCollisionWeaponEnemyMaster();
+	void HandleCollisionWeaponEnemyCanon();
+	void HandleCollisionEnemyPlayer();
+	void HandleCollisionEnemyMasterPlayer();
+	void HandleCollisionEnemyCanonPlayer();
+	void HandleCollisionEnemyMasterWeaponPlayer();
+	void HandleCollisionEnemyWeaponPlayer();
+	void HandleCollisionEnemyCanonWeaponPlayer();
+	void HandleEnemyMasterWeaponFiring();
+	void HandleEnemyWeaponFiring();
+	void HandleEnemyCanonWeaponFiring();
+	void HandleEnemyMasterMove();
+	void HandleEnemyMoves();
+	void HanldeEnemyMasterWeaponMoves();
+	void HanldeEnemyWeaponMoves();
+	void HandleEnemyCanonWeaponMove();
+	void HanldeWeaponMoves();
 	void HandleGameOver();
 	void DisplayGameOver();
-	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
+	void DisplayWin();
+	void HandlePlayerInput(sf::Keyboard::Key key, bool isPressed);
 
 private:
 	static const float		PlayerSpeed;
@@ -53,9 +57,10 @@ private:
 	sf::Time	mStatisticsUpdateTime;
 	sf::Text	mText;
 	sf::Text	_LivesText;
-	int _lives = 3;
+	int _playerLives = 3;
 	sf::Text	_ScoreText;
 	int _score = 0;
+	int _countPlayerWeaponFired = 0;
 
 	std::size_t	mStatisticsNumFrames;
 	bool mIsMovingUp;
@@ -64,19 +69,22 @@ private:
 	bool mIsMovingLeft;
 
 	bool _IsGameOver = false;
+	bool _IsGameWon = false;
 	bool _IsEnemyWeaponFired = false;
-	bool _IsPlayerWeaponFired = false;
 	bool _IsEnemyMasterWeaponFired = false;
+	bool _IsCanonWeaponFired = false;
+	bool _isMasterSummonned = false;
 
 	sf::Texture	_TextureEnemy;
-	sf::Sprite	_Enemy[SPRITE_COUNT_X][SPRITE_COUNT_Y];
-	sf::Texture	_TextureBlock;
-	sf::Sprite	_Block[BLOCK_COUNT];
+	sf::Sprite	_Enemy[SPRITE_COUNT];
+	sf::Texture	_TextureCanon;
+	sf::Sprite	_Canon[CANON_COUNT];
 	sf::Texture	_TextureWeapon;
 	sf::Texture	_TextureWeaponEnemy;
 	sf::Texture	_TextureWeaponEnemyMaster;
 	sf::Sprite	_Weapon;
 	sf::Texture	_TextureEnemyMaster;
 	sf::Sprite	_EnemyMaster;
+	sf::Texture _TextureCanonWeapon;
 };
 
