@@ -2,7 +2,7 @@
 #include "Weapon.h"
 
 #define SPRITE_COUNT 20
-#define BLOCK_COUNT 1
+#define CANON_COUNT 1
 #define MAX_WEAPON_FIRE 3
 
 class Game
@@ -22,23 +22,24 @@ private:
 
 	void updateStatistics(sf::Time elapsedTime);
 	void HandleTexts();
-	void HandleCollisionEnemyMasterWeaponPlayer();
-	void HanldeEnemyMasterWeaponMoves();
-	void HandleEnemyMasterWeaponFiring();
-	void HandleCollisionEnemyMasterWeaponBlock();
-	void HandleEnemyMasterMove();
-	void HandleCollisionEnemyWeaponBlock();
-	void HandleCollisionWeaponPlayer();
-	void HanldeEnemyWeaponMoves();
-	void HandleEnemyWeaponFiring();
-	void HandleCollisionBlockEnemy();
-	void HandleEnemyMoves();
-	void HanldeWeaponMoves();
-	void HandleCollisionWeaponBlock();
 	void HandleCollisionWeaponEnemy();
 	void HandleCollisionWeaponEnemyMaster();
+	void HandleCollisionWeaponEnemyCanon();
 	void HandleCollisionEnemyPlayer();
-	void HandleCollisionEnemymasterPlayer();
+	void HandleCollisionEnemyMasterPlayer();
+	void HandleCollisionEnemyCanonPlayer();
+	void HandleCollisionEnemyMasterWeaponPlayer();
+	void HandleCollisionEnemyWeaponPlayer();
+	void HandleCollisionEnemyCanonWeaponPlayer();
+	void HandleEnemyMasterWeaponFiring();
+	void HandleEnemyWeaponFiring();
+	void HandleEnemyCanonWeaponFiring();
+	void HandleEnemyMasterMove();
+	void HandleEnemyMoves();
+	void HanldeEnemyMasterWeaponMoves();
+	void HanldeEnemyWeaponMoves();
+	void HandleEnemyCanonWeaponMove();
+	void HanldeWeaponMoves();
 	void HandleGameOver();
 	void DisplayGameOver();
 	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
@@ -69,16 +70,18 @@ private:
 	bool _IsGameOver = false;
 	bool _IsEnemyWeaponFired = false;
 	bool _IsEnemyMasterWeaponFired = false;
+	bool _IsCanonWeaponFired = false;
 
 	sf::Texture	_TextureEnemy;
 	sf::Sprite	_Enemy[SPRITE_COUNT];
-	sf::Texture	_TextureBlock;
-	sf::Sprite	_Block[BLOCK_COUNT];
+	sf::Texture	_TextureCanon;
+	sf::Sprite	_Canon[CANON_COUNT];
 	sf::Texture	_TextureWeapon;
 	sf::Texture	_TextureWeaponEnemy;
 	sf::Texture	_TextureWeaponEnemyMaster;
 	sf::Sprite	_Weapon;
 	sf::Texture	_TextureEnemyMaster;
 	sf::Sprite	_EnemyMaster;
+	sf::Texture _TextureCanonWeapon;
 };
 

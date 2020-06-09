@@ -27,7 +27,8 @@ Game::Game()
 	mTexture.loadFromFile("Media/Textures/starfox_ship.png");
 	_TextureEnemyMaster.loadFromFile("Media/Textures/ennemy_1.png");
 	_TextureEnemy.loadFromFile("Media/Textures/ennemy_2.png");
-	_TextureBlock.loadFromFile("Media/Textures/canon_2.png");
+	_TextureCanon.loadFromFile("Media/Textures/canon_2.png");
+	_TextureCanonWeapon.loadFromFile("Media/Textures/canon_bullet.png");
 	mFont.loadFromFile("Media/Sansation.ttf");
 
 	InitSprites();
@@ -60,7 +61,7 @@ void Game::InitSprites()
 	//
 
 	mPlayer.setTexture(mTexture);
-	mPlayer.setPosition(70.f, 300.f);
+	mPlayer.setPosition(70.f, 550.f); // 300.f
 	std::shared_ptr<Entity> player = std::make_shared<Entity>();
 	player->m_sprite = mPlayer;
 	player->m_type = EntityType::player;
@@ -104,16 +105,16 @@ void Game::InitSprites()
 	// Canon
 	//
 
-	for (int i = 0; i < BLOCK_COUNT; i++)
+	for (int i = 0; i < CANON_COUNT; i++)
 	{
-		_Block[i].setTexture(_TextureBlock);
-		_Block[i].setPosition(600, 550.f);
+		_Canon[i].setTexture(_TextureCanon);
+		_Canon[i].setPosition(600, 550.f);
 
 		std::shared_ptr<Entity> sb = std::make_shared<Entity>();
-		sb->m_sprite = _Block[i];
-		sb->m_type = EntityType::block;
-		sb->m_size = _TextureBlock.getSize();
-		sb->m_position = _Block[i].getPosition();
+		sb->m_sprite = _Canon[i];
+		sb->m_type = EntityType::enemyCanon;
+		sb->m_size = _TextureCanon.getSize();
+		sb->m_position = _Canon[i].getPosition();
 		EntityManager::m_Entities.push_back(sb);
 	}
 
@@ -260,23 +261,24 @@ void Game::updateStatistics(sf::Time elapsedTime)
 
 		HandleTexts();
 		HandleGameOver();
-		HandleCollisionWeaponEnemy();
-		HandleCollisionWeaponPlayer();
-		HandleCollisionWeaponBlock();
-		HandleCollisionEnemyWeaponBlock();
-		HandleCollisionEnemyMasterWeaponBlock();
+		HandleCollisionEnemyWeaponPlayer();
 		HandleCollisionEnemyMasterWeaponPlayer();
-		HandleCollisionBlockEnemy();
-		HandleCollisionWeaponEnemyMaster();
+		HandleCollisionEnemyCanonWeaponPlayer();
 		HandleCollisionEnemyPlayer();
-		HandleCollisionEnemymasterPlayer();
+		HandleCollisionEnemyMasterPlayer();
+		HandleCollisionEnemyCanonPlayer();
+		HandleCollisionWeaponEnemy();
+		HandleCollisionWeaponEnemyMaster();
+		HandleCollisionWeaponEnemyCanon();
 		HanldeWeaponMoves();
 		HanldeEnemyWeaponMoves();
 		HanldeEnemyMasterWeaponMoves();
+		HandleEnemyCanonWeaponMove();
 		HandleEnemyMoves();
 		HandleEnemyMasterMove();
 		HandleEnemyWeaponFiring();
 		HandleEnemyMasterWeaponFiring();
+		HandleEnemyCanonWeaponFiring();
 	}
 }
 
@@ -323,6 +325,39 @@ end:
 	return;
 }
 
+void Game::HandleCollisionEnemyCanonWeaponPlayer() {
+	for (std::shared_ptr<Entity> weapon : EntityManager::m_Entities)
+	{
+		if (weapon->m_enabled == false)
+		{
+			continue;
+		}
+
+		if (weapon->m_type != EntityType::enemyCanonWeapon)
+		{
+			continue;
+		}
+
+		sf::FloatRect boundWeapon;
+		boundWeapon = weapon->m_sprite.getGlobalBounds();
+
+		sf::FloatRect boundPlayer;
+		boundPlayer = EntityManager::GetPlayer()->m_sprite.getGlobalBounds();
+
+		if (boundWeapon.intersects(boundPlayer) == true)
+		{
+			weapon->m_enabled = false;
+			_IsCanonWeaponFired = false;
+			_lives--;
+			goto end;
+		}
+	}
+
+end:
+	//nop
+	return;
+}
+
 void Game::HanldeEnemyMasterWeaponMoves()
 {
 	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
@@ -352,105 +387,7 @@ void Game::HanldeEnemyMasterWeaponMoves()
 	}
 }
 
-
-
-void Game::HandleCollisionEnemyMasterWeaponBlock()
-{
-	for (std::shared_ptr<Entity> weapon : EntityManager::m_Entities)
-	{
-		if (weapon->m_enabled == false)
-		{
-			continue;
-		}
-
-		if (weapon->m_type != EntityType::enemyMasterWeapon)
-		{
-			continue;
-		}
-
-		for (std::shared_ptr<Entity> block : EntityManager::m_Entities)
-		{
-			if (block->m_type != EntityType::block)
-			{
-				continue;
-			}
-
-			if (block->m_enabled == false)
-			{
-				continue;
-			}
-
-			sf::FloatRect boundWeapon;
-			boundWeapon = weapon->m_sprite.getGlobalBounds();
-
-			sf::FloatRect boundBlock;
-			boundBlock = block->m_sprite.getGlobalBounds();
-
-			if (boundWeapon.intersects(boundBlock) == true)
-			{
-				weapon->m_enabled = false;
-				_IsEnemyMasterWeaponFired = false;
-				//break;
-				goto end2;
-			}
-		}
-	}
-
-end2:
-	//nop
-	return;
-}
-
-
-
-void Game::HandleCollisionEnemyWeaponBlock()
-{
-	for (std::shared_ptr<Entity> weapon : EntityManager::m_Entities)
-	{
-		if (weapon->m_enabled == false)
-		{
-			continue;
-		}
-
-		if (weapon->m_type != EntityType::enemyWeapon)
-		{
-			continue;
-		}
-
-		for (std::shared_ptr<Entity> block : EntityManager::m_Entities)
-		{
-			if (block->m_type != EntityType::block)
-			{
-				continue;
-			}
-
-			if (block->m_enabled == false)
-			{
-				continue;
-			}
-
-			sf::FloatRect boundWeapon;
-			boundWeapon = weapon->m_sprite.getGlobalBounds();
-
-			sf::FloatRect boundBlock;
-			boundBlock = block->m_sprite.getGlobalBounds();
-
-			if (boundWeapon.intersects(boundBlock) == true)
-			{
-				weapon->m_enabled = false;
-				_IsEnemyWeaponFired = false;
-				//break;
-				goto end2;
-			}
-		}
-	}
-
-end2:
-	//nop
-	return;
-}
-
-void Game::HandleCollisionWeaponPlayer()
+void Game::HandleCollisionEnemyWeaponPlayer()
 {
 	for (std::shared_ptr<Entity> weapon : EntityManager::m_Entities)
 	{
@@ -600,51 +537,81 @@ void Game::HandleEnemyWeaponFiring()
 	}
 }
 
-void Game::HandleCollisionBlockEnemy()
-{
-	// Handle collision ennemy blocks
-
-	for (std::shared_ptr<Entity> enemy : EntityManager::m_Entities)
+void Game::HandleEnemyCanonWeaponFiring() {
+	if (_IsCanonWeaponFired == true)
+		return;
+	std::vector<std::shared_ptr<Entity>>::reverse_iterator rit = EntityManager::m_Entities.rbegin();
+	for (; rit != EntityManager::m_Entities.rend(); rit++)
 	{
-		if (enemy->m_enabled == false)
+		std::shared_ptr<Entity> entity = *rit;
+
+		if (entity->m_enabled == false)
 		{
 			continue;
 		}
 
-		if (enemy->m_type != EntityType::enemy)
+		if (entity->m_type != EntityType::enemyCanon)
 		{
 			continue;
 		}
 
-		for (std::shared_ptr<Entity> block : EntityManager::m_Entities)
+		// a little random...
+		/*int r = rand() % 50;
+		if (r != 10)
+			continue;*/
+
+		float x, y;
+		x = entity->m_sprite.getPosition().x;
+		y = entity->m_sprite.getPosition().y;
+
+		std::shared_ptr<Entity> sw = std::make_shared<Entity>();
+		sw->m_sprite.setTexture(_TextureCanonWeapon);
+		sw->m_sprite.setPosition(
+			x + _TextureCanonWeapon.getSize().x / 2,
+			y + _TextureCanonWeapon.getSize().y);
+
+		sw->m_sprite.setPosition(
+			entity->m_sprite.getPosition().x,
+			entity->m_sprite.getPosition().y);
+
+		sw->m_type = EntityType::enemyCanonWeapon;
+		sw->m_size = _TextureCanonWeapon.getSize();
+		EntityManager::m_Entities.push_back(sw);
+
+		_IsCanonWeaponFired = true;
+		break;
+	}
+}
+
+void Game::HandleEnemyCanonWeaponMove() {
+	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
+	{
+		if (entity->m_enabled == false)
 		{
-			if (block->m_type != EntityType::block)
-			{
-				continue;
-			}
+			continue;
+		}
 
-			if (block->m_enabled == false)
-			{
-				continue;
-			}
+		if (entity->m_type != EntityType::enemyCanonWeapon)
+		{
+			continue;
+		}
 
-			sf::FloatRect boundEnemy;
-			boundEnemy = enemy->m_sprite.getGlobalBounds();
+		float x, y;
+		x = entity->m_sprite.getPosition().x;
+		y = entity->m_sprite.getPosition().y;
+		x -= 3.0f;
+		y -= static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 1.5f));
 
-			sf::FloatRect boundBlock;
-			boundBlock = block->m_sprite.getGlobalBounds();
-
-			if (boundEnemy.intersects(boundBlock) == true)
-			{
-				EntityManager::GetPlayer()->m_enabled = false;
-				goto end3;
-			}
+		if (x <= 0 || y <= 0)
+		{
+			entity->m_enabled = false;
+			_IsCanonWeaponFired = false;
+		}
+		else
+		{
+			entity->m_sprite.setPosition(x, y);
 		}
 	}
-
-end3:
-	//nop
-	return;
 }
 
 void Game::HandleEnemyMasterMove()
@@ -776,55 +743,6 @@ void Game::HanldeWeaponMoves()
 	}
 }
 
-void Game::HandleCollisionWeaponBlock()
-{
-	// Handle collision weapon blocks
-
-	for (std::shared_ptr<Entity> weapon : EntityManager::m_Entities)
-	{
-		if (weapon->m_enabled == false)
-		{
-			continue;
-		}
-
-		if (weapon->m_type != EntityType::weapon)
-		{
-			continue;
-		}
-
-		for (std::shared_ptr<Entity> block : EntityManager::m_Entities)
-		{
-			if (block->m_type != EntityType::block)
-			{
-				continue;
-			}
-
-			if (block->m_enabled == false)
-			{
-				continue;
-			}
-
-			sf::FloatRect boundWeapon;
-			boundWeapon = weapon->m_sprite.getGlobalBounds();
-
-			sf::FloatRect boundBlock;
-			boundBlock = block->m_sprite.getGlobalBounds();
-
-			if (boundWeapon.intersects(boundBlock) == true)
-			{
-				weapon->m_enabled = false;
-				_countPlayerWeaponFired--;
-				//break;
-				goto end2;
-			}
-		}
-	}
-
-end2:
-	//nop
-	return;
-}
-
 void Game::HandleCollisionWeaponEnemy()
 {
 	// Handle collision weapon enemies
@@ -927,6 +845,54 @@ end:
 	return;
 }
 
+void Game::HandleCollisionWeaponEnemyCanon() {
+	for (std::shared_ptr<Entity> weapon : EntityManager::m_Entities)
+	{
+		if (weapon->m_enabled == false)
+		{
+			continue;
+		}
+
+		if (weapon->m_type != EntityType::weapon)
+		{
+			continue;
+		}
+
+		for (std::shared_ptr<Entity> enemy : EntityManager::m_Entities)
+		{
+			if (enemy->m_type != EntityType::enemyCanon)
+			{
+				continue;
+			}
+
+			if (enemy->m_enabled == false)
+			{
+				continue;
+			}
+
+			sf::FloatRect boundWeapon;
+			boundWeapon = weapon->m_sprite.getGlobalBounds();
+
+			sf::FloatRect boundEnemy;
+			boundEnemy = enemy->m_sprite.getGlobalBounds();
+
+			if (boundWeapon.intersects(boundEnemy) == true)
+			{
+				enemy->m_enabled = false;
+				weapon->m_enabled = false;
+				_countPlayerWeaponFired--;
+				_score += 20;
+				//break;
+				goto end;
+			}
+		}
+	}
+
+end:
+	//nop
+	return;
+}
+
 void Game::HandleCollisionEnemyPlayer() {
 	for (std::shared_ptr<Entity> enemy : EntityManager::m_Entities)
 	{
@@ -959,7 +925,7 @@ end:
 	return;
 }
 
-void Game::HandleCollisionEnemymasterPlayer() {
+void Game::HandleCollisionEnemyMasterPlayer() {
 	for (std::shared_ptr<Entity> enemyMaster : EntityManager::m_Entities)
 	{
 		if (enemyMaster->m_enabled == false)
@@ -982,6 +948,38 @@ void Game::HandleCollisionEnemymasterPlayer() {
 		{
 			enemyMaster->m_enabled = false;
 			_lives -= 2;
+			goto end;
+		}
+	}
+
+end:
+	//nop
+	return;
+}
+
+void Game::HandleCollisionEnemyCanonPlayer() {
+	for (std::shared_ptr<Entity> enemy : EntityManager::m_Entities)
+	{
+		if (enemy->m_enabled == false)
+		{
+			continue;
+		}
+
+		if (enemy->m_type != EntityType::enemyCanon)
+		{
+			continue;
+		}
+
+		sf::FloatRect boundEnemyMaster;
+		boundEnemyMaster = enemy->m_sprite.getGlobalBounds();
+
+		sf::FloatRect boundPlayer;
+		boundPlayer = EntityManager::GetPlayer()->m_sprite.getGlobalBounds();
+
+		if (boundEnemyMaster.intersects(boundPlayer) == true)
+		{
+			enemy->m_enabled = false;
+			_lives--;
 			goto end;
 		}
 	}

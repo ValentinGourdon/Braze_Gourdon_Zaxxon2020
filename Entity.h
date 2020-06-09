@@ -4,11 +4,12 @@ enum EntityType
 {
 	player,
 	weapon,
-	enemyWeapon,
-	enemyMasterWeapon,
 	enemy,
+	enemyWeapon,
 	enemyMaster,
-	block
+	enemyMasterWeapon,
+	enemyCanon,
+	enemyCanonWeapon
 };
 
 class Entity
