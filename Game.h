@@ -1,7 +1,7 @@
 #pragma once
 #include "Weapon.h"
 
-#define SPRITE_COUNT 5
+#define ENEMIES_COUNT 5
 #define CANON_COUNT 1
 #define MAX_WEAPON_FIRE 3
 
@@ -76,7 +76,7 @@ private:
 	bool _isMasterSummonned = false;
 
 	sf::Texture	_TextureEnemy;
-	sf::Sprite	_Enemy[SPRITE_COUNT];
+	sf::Sprite	_Enemy[ENEMIES_COUNT];
 	sf::Texture	_TextureCanon;
 	sf::Sprite	_Canon[CANON_COUNT];
 	sf::Texture	_TextureWeapon;
@@ -86,5 +86,6 @@ private:
 	sf::Texture	_TextureEnemyMaster;
 	sf::Sprite	_EnemyMaster;
 	sf::Texture _TextureCanonWeapon;
+	sf::Texture _TextureBackground;
 };
 

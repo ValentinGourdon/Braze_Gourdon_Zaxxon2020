@@ -21,6 +21,7 @@ Game::Game()
 {
 	mWindow.setFramerateLimit(160);
 
+	_TextureBackground.loadFromFile("Media/Textures/background.png");
 	_TextureWeapon.loadFromFile("Media/Textures/SI_WeaponGreen_horizontal.png");
 	_TextureWeaponEnemy.loadFromFile("Media/Textures/SI_WeaponYellow_horizontal.png");
 	_TextureWeaponEnemyMaster.loadFromFile("Media/Textures/SI_WeaponRed_horizontal.png");
@@ -89,7 +90,7 @@ void Game::InitSprites()
 	// Enemies
 	//
 
-	for (int i = 0; i < SPRITE_COUNT; i++)
+	for (int i = 0; i < ENEMIES_COUNT; i++)
 	{
 		int r = rand() % 100;
 
@@ -111,7 +112,7 @@ void Game::InitSprites()
 	for (int i = 0; i < CANON_COUNT; i++)
 	{
 		_Canon[i].setTexture(_TextureCanon);
-		_Canon[i].setPosition(600, 550.f);
+		_Canon[i].setPosition(600.f + (i * 60), 550.f);
 
 		std::shared_ptr<Entity> sb = std::make_shared<Entity>();
 		sb->m_sprite = _Canon[i];
@@ -1011,9 +1012,8 @@ void Game::HandleGameOver()
 		return false;
 	});
 
-	// sprite counts + enemy master + enemy canon
-	//if (count >= (5))
-	if (count == (SPRITE_COUNT + 2))
+	// enemies counts + enemy canon count + enemy master
+	if (count == (ENEMIES_COUNT + CANON_COUNT + 1))
 	{
 		DisplayWin();
 	}
@@ -1077,14 +1077,18 @@ void Game::DisplayWin()
 
 void Game::HandlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 {
-	if (key == sf::Keyboard::Up)
+	if (key == sf::Keyboard::Up) {
 		mIsMovingUp = isPressed;
-	else if (key == sf::Keyboard::Down)
+	}
+	else if (key == sf::Keyboard::Down) {
 		mIsMovingDown = isPressed;
-	else if (key == sf::Keyboard::Left)
+	}
+	else if (key == sf::Keyboard::Left) {
 		mIsMovingLeft = isPressed;
-	else if (key == sf::Keyboard::Right)
+	}
+	else if (key == sf::Keyboard::Right) {
 		mIsMovingRight = isPressed;
+	}
 
 	if (key == sf::Keyboard::Space)
 	{
