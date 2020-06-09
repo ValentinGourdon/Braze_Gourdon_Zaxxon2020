@@ -1,5 +1,5 @@
 # Prerequis
-Download SFML 2.5.1 here https://www.sfml-dev.org/download-fr.php
+Download SFML 2.5.1 here https://www.sfml-dev.org/download-fr.php.
 Install it on your computer
 
 # Visual Studio parameters
