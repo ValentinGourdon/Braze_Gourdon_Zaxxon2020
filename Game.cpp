@@ -37,6 +37,7 @@ Game::Game()
 void Game::ResetSprites()
 {
 	_IsGameOver = false;
+	_IsGameWon = false;
 	_IsEnemyWeaponFired = false;
 	_countPlayerWeaponFired = 0;
 	_IsEnemyMasterWeaponFired = false;
@@ -52,6 +53,7 @@ void Game::InitSprites()
 	_lives = 3;
 	_score = 0;
 	_IsGameOver = false;
+	_IsGameWon = false;
 	_IsEnemyWeaponFired = false;
 	_countPlayerWeaponFired = 0;
 	_IsEnemyMasterWeaponFired = false;
@@ -80,6 +82,7 @@ void Game::InitSprites()
 	sem->m_type = EntityType::enemyMaster;
 	sem->m_size = _TextureEnemyMaster.getSize();
 	sem->m_position = _EnemyMaster.getPosition();
+	sem->m_enabled = false;
 	EntityManager::m_Entities.push_back(sem);
 
 	//
@@ -256,7 +259,7 @@ void Game::updateStatistics(sf::Time elapsedTime)
 
 	if (mStatisticsUpdateTime >= sf::seconds(0.050f))
 	{
-		if (_IsGameOver == true)
+		if (_IsGameOver == true || _IsGameWon == true)
 			return;
 
 		HandleTexts();
@@ -556,9 +559,9 @@ void Game::HandleEnemyCanonWeaponFiring() {
 		}
 
 		// a little random...
-		/*int r = rand() % 50;
+		int r = rand() % 50;
 		if (r != 10)
-			continue;*/
+			continue;
 
 		float x, y;
 		x = entity->m_sprite.getPosition().x;
@@ -616,45 +619,53 @@ void Game::HandleEnemyCanonWeaponMove() {
 
 void Game::HandleEnemyMasterMove()
 {
-	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
-	{
-		if (entity->m_enabled == false)
+	if (!_isMasterSummonned) {
+		if (rand() % 500 == 10) {
+			_isMasterSummonned = true;
+			EntityManager::GetEnemyMaster()->m_enabled = true;
+		}
+	}
+	else {
+		for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
 		{
-			continue;
-		}
-
-		if (entity->m_type != EntityType::enemyMaster)
-		{
-			continue;
-		}
-
-		float x, y;
-		x = entity->m_sprite.getPosition().x;
-		y = entity->m_sprite.getPosition().y;
-
-		if (entity->m_bLeftToRight == true) {
-			y += 2;
-		}
-		else {
-			y -= 2;
-		}
-		entity->m_times += 2;
-
-		if (entity->m_times >= 400.0)
-		{
-			if (entity->m_bLeftToRight == true)
+			if (entity->m_enabled == false)
 			{
-				entity->m_bLeftToRight = false;
-				entity->m_times = 0;
+				continue;
 			}
-			else
-			{
-				entity->m_bLeftToRight = true;
-				entity->m_times = 0;
-			}
-		}
 
-		entity->m_sprite.setPosition(x, y);
+			if (entity->m_type != EntityType::enemyMaster)
+			{
+				continue;
+			}
+
+			float x, y;
+			x = entity->m_sprite.getPosition().x;
+			y = entity->m_sprite.getPosition().y;
+
+			if (entity->m_bTopToBottom == true) {
+				y += 2;
+			}
+			else {
+				y -= 2;
+			}
+			entity->m_times += 2;
+
+			if (entity->m_times >= 400.0)
+			{
+				if (entity->m_bTopToBottom == true)
+				{
+					entity->m_bTopToBottom = false;
+					entity->m_times = 0;
+				}
+				else
+				{
+					entity->m_bTopToBottom = true;
+					entity->m_times = 0;
+				}
+			}
+
+			entity->m_sprite.setPosition(x, y);
+		}
 	}
 }
 
@@ -681,26 +692,23 @@ void Game::HandleEnemyMoves()
 		x = entity->m_sprite.getPosition().x;
 		y = entity->m_sprite.getPosition().y;
 		
-		if (entity->m_bLeftToRight == true) {
+		if (entity->m_bTopToBottom == true)
 			y++;
-			x -= 0.2;
-		}
-		else {
+		else
 			y--;
-			x -= 0.2;
-		}
+		x -= 0.2;
 		entity->m_times++;
 
 		if (entity->m_times >= 400) //0)
 		{
-			if (entity->m_bLeftToRight == true)
+			if (entity->m_bTopToBottom == true)
 			{
-				entity->m_bLeftToRight = false;
+				entity->m_bTopToBottom = false;
 				entity->m_times = 0;
 			}
 			else
 			{
-				entity->m_bLeftToRight = true;
+				entity->m_bTopToBottom = true;
 				entity->m_times = 0;
 				y += 1;
 			}
@@ -993,7 +1001,7 @@ void Game::HandleGameOver()
 {
 	// Game Over ?
 	int count = std::count_if(EntityManager::m_Entities.begin(), EntityManager::m_Entities.end(), [](std::shared_ptr<Entity> element) {
-		if (element->m_type == EntityType::enemy || element->m_type == EntityType::enemyMaster)
+		if (element->m_type == EntityType::enemy || element->m_type == EntityType::enemyMaster || element->m_type == EntityType::enemyCanon)
 		{
 			if (element->m_enabled == false)
 			{
@@ -1003,11 +1011,11 @@ void Game::HandleGameOver()
 		return false;
 	});
 
-	// sprite counts + enemy master
+	// sprite counts + enemy master + enemy canon
 	//if (count >= (5))
-	if (count == (SPRITE_COUNT + 1))
+	if (count == (SPRITE_COUNT + 2))
 	{
-		DisplayGameOver();
+		DisplayWin();
 	}
 
 	if (EntityManager::GetPlayer()->m_enabled == false)
@@ -1025,7 +1033,7 @@ void Game::DisplayGameOver()
 {
 	if (_lives == 0)
 	{
-		mText.setFillColor(sf::Color::Green);
+		mText.setFillColor(sf::Color::Red);
 		mText.setFont(mFont);
 		mText.setPosition(200.f, 200.f);
 		mText.setCharacterSize(80);
@@ -1033,6 +1041,25 @@ void Game::DisplayGameOver()
 		mText.setString("GAME OVER");
 
 		_IsGameOver = true;
+	}
+	else
+	{
+		ResetSprites();
+	}
+}
+
+void Game::DisplayWin()
+{
+	if (_lives != 0)
+	{
+		mText.setFillColor(sf::Color::Green);
+		mText.setFont(mFont);
+		mText.setPosition(200.f, 200.f);
+		mText.setCharacterSize(80);
+
+		mText.setString("YOU WON !!!");
+
+		_IsGameWon = true;
 	}
 	else
 	{
