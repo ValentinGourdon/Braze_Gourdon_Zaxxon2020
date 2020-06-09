@@ -1,7 +1,7 @@
 #pragma once
 #include "Weapon.h"
 
-#define SPRITE_COUNT 20
+#define SPRITE_COUNT 5
 #define CANON_COUNT 1
 #define MAX_WEAPON_FIRE 3
 
@@ -42,7 +42,8 @@ private:
 	void HanldeWeaponMoves();
 	void HandleGameOver();
 	void DisplayGameOver();
-	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
+	void DisplayWin();
+	void HandlePlayerInput(sf::Keyboard::Key key, bool isPressed);
 
 private:
 	static const float		PlayerSpeed;
@@ -56,7 +57,7 @@ private:
 	sf::Time	mStatisticsUpdateTime;
 	sf::Text	mText;
 	sf::Text	_LivesText;
-	int _lives = 3;
+	int _playerLives = 3;
 	sf::Text	_ScoreText;
 	int _score = 0;
 	int _countPlayerWeaponFired = 0;
@@ -68,9 +69,11 @@ private:
 	bool mIsMovingLeft;
 
 	bool _IsGameOver = false;
+	bool _IsGameWon = false;
 	bool _IsEnemyWeaponFired = false;
 	bool _IsEnemyMasterWeaponFired = false;
 	bool _IsCanonWeaponFired = false;
+	bool _isMasterSummonned = false;
 
 	sf::Texture	_TextureEnemy;
 	sf::Sprite	_Enemy[SPRITE_COUNT];
