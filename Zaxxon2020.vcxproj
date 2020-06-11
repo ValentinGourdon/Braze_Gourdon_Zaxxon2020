@@ -94,8 +94,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath);D:\Cours\ESGI\4AL\S2\CPP\Projet\SFML-2.5.1\include</IncludePath>
-    <LibraryPath>$(LibraryPath);D:\Cours\ESGI\4AL\S2\CPP\Projet\SFML-2.5.1\lib</LibraryPath>
+    <IncludePath>$(IncludePath);C:\workspace\c++\SFML-2.5.1\include</IncludePath>
+    <LibraryPath>$(LibraryPath);C:\workspace\c++\SFML-2.5.1\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
