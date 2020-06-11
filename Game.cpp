@@ -6,9 +6,11 @@
 
 const float Game::PlayerSpeed = 200.f;
 const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
+const int windowHeight = 600;
+const int windowWidth = 840;
 
 Game::Game()
-	: mWindow(sf::VideoMode(840, 600), "Zaxxon 2020", sf::Style::Close)
+	: mWindow(sf::VideoMode(windowWidth, windowHeight), "Zaxxon 2020", sf::Style::Close)
 	, mTexture()
 	, mPlayer()
 	, mFont()
@@ -205,7 +207,7 @@ void Game::update(sf::Time elapsedTime)
 		}
 	}
 	if (mIsMovingDown) {
-		if (playerCurrentPos.y + playerSize.y + 1.f > this->windowHeight) {
+		if (playerCurrentPos.y + playerSize.y + 1.f > windowHeight) {
 			movement.y = movement.y;
 		}
 		else {
@@ -221,7 +223,7 @@ void Game::update(sf::Time elapsedTime)
 		}
 	}
 	if (mIsMovingRight) {
-		if (playerCurrentPos.x + playerSize.x + 1.f > this->windowWidth) {
+		if (playerCurrentPos.x + playerSize.x + 1.f > windowWidth) {
 			movement.x = movement.x;
 		}
 		else {

@@ -61,8 +61,6 @@ private:
 	sf::Text	_ScoreText;
 	int _score = 0;
 	int _countPlayerWeaponFired = 0;
-	int windowHeight = 600;
-	int windowWidth = 840;
 
 	std::size_t	mStatisticsNumFrames;
 	bool mIsMovingUp;
