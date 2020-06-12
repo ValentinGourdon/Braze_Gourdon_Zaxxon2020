@@ -21,7 +21,6 @@ Game::Game()
 {
 	mWindow.setFramerateLimit(160);
 
-	_TextureBackground.loadFromFile("Media/Textures/background.png");
 	_TextureWeapon.loadFromFile("Media/Textures/SI_WeaponGreen_horizontal.png");
 	_TextureWeaponEnemy.loadFromFile("Media/Textures/SI_WeaponYellow_horizontal.png");
 	_TextureWeaponEnemyMaster.loadFromFile("Media/Textures/enemy_master_weapon.png");
@@ -30,6 +29,8 @@ Game::Game()
 	_TextureEnemy.loadFromFile("Media/Textures/enemy.png");
 	_TextureCanon.loadFromFile("Media/Textures/canon_2.png");
 	_TextureCanonWeapon.loadFromFile("Media/Textures/canon_bullet.png");
+	_TextureEnemyBoss.loadFromFile("Media/Textures/enemy_boss.png");
+	_TextureWeaponEnemyBoss.loadFromFile("Media/Textures/enemy_boss_weapon.png");
 	mFont.loadFromFile("Media/Sansation.ttf");
 
 	InitSprites();
@@ -95,14 +96,13 @@ void Game::InitSprites()
 		int r = rand() % 100;
 
 		_EnemySquad1[i].setTexture(_TextureEnemy);
-		_EnemySquad1[i].setPosition(600.f + 200.f * (i + 1), 100);
+		_EnemySquad1[i].setPosition(700.f + 200.f * (i + 1), 100);
 
 		std::shared_ptr<Entity> se = std::make_shared<Entity>();
 		se->m_sprite = _EnemySquad1[i];
 		se->m_type = EntityType::enemy;
 		se->m_size = _TextureEnemy.getSize();
 		se->m_position = _EnemySquad1[i].getPosition();
-		se->m_squad = 1;
 		EntityManager::m_Entities.push_back(se);
 	}
 
@@ -115,7 +115,7 @@ void Game::InitSprites()
 		int r = rand() % 100;
 
 		_EnemySquad2[i].setTexture(_TextureEnemy);
-		_EnemySquad2[i].setPosition(700.f + 200.f * (i + 1), 500);
+		_EnemySquad2[i].setPosition(800.f + 200.f * (i + 1), 500);
 
 		std::shared_ptr<Entity> se = std::make_shared<Entity>();
 		se->m_sprite = _EnemySquad2[i];
@@ -142,6 +142,20 @@ void Game::InitSprites()
 		sb->m_position = _Canon[i].getPosition();
 		EntityManager::m_Entities.push_back(sb);
 	}
+
+	//
+	// Boss
+	//
+	_EnemyBoss.setTexture(_TextureEnemyBoss);
+	_EnemyBoss.setPosition(850.f, 225.f);
+	std::shared_ptr<Entity> seb = std::make_shared<Entity>();
+	seb->m_sprite = _EnemyBoss;
+	seb->m_type = EntityType::enemyBoss;
+	seb->m_size = _TextureEnemyBoss.getSize();
+	seb->m_position = _EnemyBoss.getPosition();
+	seb->m_enabled = false;
+	EntityManager::m_Entities.push_back(seb);
+
 
 	mStatisticsText.setFont(mFont);
 	mStatisticsText.setPosition(5.f, 5.f);
@@ -292,19 +306,26 @@ void Game::updateStatistics(sf::Time elapsedTime)
 		HandleCollisionEnemyPlayer();
 		HandleCollisionEnemyMasterPlayer();
 		HandleCollisionEnemyCanonPlayer();
-		HandleCollisionWeaponEnemy();
-		HandleCollisionWeaponEnemyMaster();
-		HandleCollisionWeaponEnemyCanon();
-		HanldeWeaponMoves();
-		HanldeEnemyWeaponMoves();
-		HanldeEnemyMasterWeaponMoves();
-		HandleEnemyCanonWeaponMove();
-		HandleEnemyMoves();
+		HandleCollisionEnemyBossPlayer();
+		HandleCollisionEnemyBossWeaponPlayer();
 		HandleEnemyPastPlayer();
+		HandleEnemyBossArrival();
+		HanldeEnemyWeaponMoves();
+		HandleEnemyMasterWeaponMoves();
+		HandleEnemyCanonWeaponMove();
+		HandleEnemyBossWeaponMove();
+		HandleEnemyMoves();
 		HandleEnemyMasterMove();
+		HandleEnemyBossMoves();
 		HandleEnemyWeaponFiring();
 		HandleEnemyMasterWeaponFiring();
 		HandleEnemyCanonWeaponFiring();
+		HandleEnemyBossWeaponFiring();
+		HanldeWeaponMoves();
+		HandleCollisionWeaponEnemy();
+		HandleCollisionWeaponEnemyMaster();
+		HandleCollisionWeaponEnemyCanon();
+		HandleCollisionWeaponEnemyBoss();
 	}
 }
 
@@ -351,6 +372,38 @@ end:
 	return;
 }
 
+
+void Game::HandleCollisionEnemyBossWeaponPlayer() {
+	for (std::shared_ptr<Entity> weapon : EntityManager::m_Entities)
+	{
+		if (weapon->m_enabled == false)
+		{
+			continue;
+		}
+
+		if (weapon->m_type != EntityType::enemyBossWeapon)
+		{
+			continue;
+		}
+
+		sf::FloatRect boundWeapon;
+		boundWeapon = weapon->m_sprite.getGlobalBounds();
+
+		sf::FloatRect boundPlayer;
+		boundPlayer = EntityManager::GetPlayer()->m_sprite.getGlobalBounds();
+
+		if (boundWeapon.intersects(boundPlayer) == true)
+		{
+			weapon->m_enabled = false;
+			_playerLives--;
+			goto end;
+		}
+	}
+
+end:
+	return;
+}
+
 void Game::HandleCollisionEnemyCanonWeaponPlayer() {
 	for (std::shared_ptr<Entity> weapon : EntityManager::m_Entities)
 	{
@@ -373,7 +426,7 @@ void Game::HandleCollisionEnemyCanonWeaponPlayer() {
 		if (boundWeapon.intersects(boundPlayer) == true)
 		{
 			weapon->m_enabled = false;
-			_IsCanonWeaponFired = false;
+			_IsEnemyCanonWeaponFired = false;
 			_playerLives--;
 			goto end;
 		}
@@ -384,7 +437,7 @@ end:
 	return;
 }
 
-void Game::HanldeEnemyMasterWeaponMoves()
+void Game::HandleEnemyMasterWeaponMoves()
 {
 	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
 	{
@@ -511,6 +564,69 @@ void Game::HandleEnemyMasterWeaponFiring()
 	PlaySound(TEXT("Media/Sounds/laser-shot-master.wav"), NULL, SND_ASYNC);
 }
 
+
+void Game::HandleEnemyBossWeaponFiring() {
+	if (!_IsBossArrived)
+		return;
+
+	/*if (_IsEnemyBossWeaponFired == true)
+		return;*/
+
+	if (EntityManager::GetEnemyBoss()->m_enabled == false)
+		return;
+
+	// a little random...
+	int r = rand() % 100;
+	if (r != 1)
+		return;
+
+	float x, y;
+	x = EntityManager::GetEnemyBoss()->m_sprite.getPosition().x;
+	y = EntityManager::GetEnemyBoss()->m_sprite.getPosition().y;
+	y--;
+
+	std::shared_ptr<Entity> sw = std::make_shared<Entity>();
+	sw->m_sprite.setTexture(_TextureWeaponEnemyBoss);
+	sw->m_sprite.setPosition(
+		x + (_TextureEnemyBoss.getSize().x / 2) - 50,
+		y + _TextureEnemyBoss.getSize().y - 30);
+	sw->m_type = EntityType::enemyBossWeapon;
+	sw->m_size = _TextureWeaponEnemyBoss.getSize();
+	EntityManager::m_Entities.push_back(sw);
+
+	_IsEnemyBossWeaponFired = true;
+	PlaySound(TEXT("Media/Sounds/laser-shot-master.wav"), NULL, SND_ASYNC);
+}
+
+
+void Game::HandleEnemyBossWeaponMove() {
+	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
+	{
+		if (entity->m_enabled == false)
+		{
+			continue;
+		}
+
+		if (entity->m_type != EntityType::enemyBossWeapon)
+		{
+			continue;
+		}
+
+		float x, y;
+		x = entity->m_sprite.getPosition().x;
+		y = entity->m_sprite.getPosition().y;
+		x -= 4;
+
+		if (x <= 0)
+		{
+			entity->m_enabled = false;
+			_IsEnemyBossWeaponFired = false;
+		}
+
+		entity->m_sprite.setPosition(x, y);
+	}
+}
+
 void Game::HandleEnemyWeaponFiring()
 {
 	std::vector<std::shared_ptr<Entity>>::reverse_iterator rit = EntityManager::m_Entities.rbegin();
@@ -563,7 +679,7 @@ void Game::HandleEnemyWeaponFiring()
 }
 
 void Game::HandleEnemyCanonWeaponFiring() {
-	if (_IsCanonWeaponFired == true)
+	if (_IsEnemyCanonWeaponFired == true)
 		return;
 	std::vector<std::shared_ptr<Entity>>::reverse_iterator rit = EntityManager::m_Entities.rbegin();
 	for (; rit != EntityManager::m_Entities.rend(); rit++)
@@ -603,7 +719,7 @@ void Game::HandleEnemyCanonWeaponFiring() {
 		sw->m_size = _TextureCanonWeapon.getSize();
 		EntityManager::m_Entities.push_back(sw);
 
-		_IsCanonWeaponFired = true;
+		_IsEnemyCanonWeaponFired = true;
 		PlaySound(TEXT("Media/Sounds/Canon.wav"), NULL, SND_ASYNC);
 		break;
 	}
@@ -631,7 +747,7 @@ void Game::HandleEnemyCanonWeaponMove() {
 		if (x <= 0 || y <= 0)
 		{
 			entity->m_enabled = false;
-			_IsCanonWeaponFired = false;
+			_IsEnemyCanonWeaponFired = false;
 		}
 		else
 		{
@@ -642,9 +758,10 @@ void Game::HandleEnemyCanonWeaponMove() {
 
 void Game::HandleEnemyMasterMove()
 {
-	if (!_isMasterSummonned) {
-		if (rand() % 500 == 10) {
-			_isMasterSummonned = true;
+	if (!_IsMasterSummonned) {
+		int r = rand() % 1500;
+		if (r == 1) {
+			_IsMasterSummonned = true;
 			EntityManager::GetEnemyMaster()->m_enabled = true;
 		}
 	}
@@ -683,6 +800,118 @@ void Game::HandleEnemyMasterMove()
 				else
 				{
 					entity->m_bTopToBottom = true;
+					entity->m_times = 0;
+				}
+			}
+
+			entity->m_sprite.setPosition(x, y);
+		}
+	}
+}
+
+void Game::HandleEnemyBossArrival()
+{
+	if (!_IsBossArrived) {
+
+		// enemies counts (2 squads) + enemy canon count + enemy master
+		if (_nbEnemyKilled == ((ENEMIES_COUNT * 2) + CANON_COUNT + 1)) {
+			// Disable player shoot during boss arrival
+			_countPlayerWeaponFired = 3;
+
+			EntityManager::GetEnemyBoss()->m_enabled = true;
+			for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
+			{
+				if (entity->m_enabled == false)
+				{
+					continue;
+				}
+
+				if (entity->m_type != EntityType::enemyBoss)
+				{
+					continue;
+				}
+
+				float x, y;
+				x = entity->m_sprite.getPosition().x;
+				y = entity->m_sprite.getPosition().y;
+
+				if (x <= 670) {
+					_IsBossArrived = true;
+					_countPlayerWeaponFired = 0;
+				}
+				else {
+					x--;
+				}
+
+				entity->m_sprite.setPosition(x, y);
+			}
+		}
+	}
+}
+
+void Game::HandleEnemyBossMoves()
+{
+	//
+	// Handle Enemy Boss moves
+	//
+	if (_IsBossArrived) {
+		for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
+		{
+			if (entity->m_enabled == false)
+			{
+				continue;
+			}
+
+			if (entity->m_type != EntityType::enemyBoss)
+			{
+				continue;
+			}
+
+			float x, y;
+			x = entity->m_sprite.getPosition().x;
+			y = entity->m_sprite.getPosition().y;
+
+			if (entity->m_TopToLeft == true) {
+				y -= 1.5;
+				x -= 1.5;
+			}
+			else if (entity->m_LeftToBottom == true)
+			{
+				y -= 1.5;
+				x += 1.5;
+			}
+			else if (entity->m_BottomToRight == true) {
+				y += 1.5;
+				x += 1.5;
+			}
+			else {
+				y += 1.5;
+				x -= 1.5;
+			}
+			entity->m_times++;
+
+			if (entity->m_times >= 120) //0)
+			{
+				if (entity->m_TopToLeft == true)
+				{
+					entity->m_LeftToBottom = true;
+					entity->m_TopToLeft = false;
+					entity->m_times = 0;
+				}
+				else if(entity->m_LeftToBottom == true)
+				{
+					entity->m_BottomToRight = true;
+					entity->m_LeftToBottom = false;
+					entity->m_times = 0;
+				}
+				else if (entity->m_BottomToRight == true) {
+					entity->m_RightToTop = true;
+					entity->m_BottomToRight = false;
+					entity->m_times = 0;
+				}
+				else {
+					entity->m_TopToLeft = true;
+					entity->m_LeftToBottom = false;
 					entity->m_times = 0;
 				}
 			}
@@ -858,6 +1087,7 @@ void Game::HandleCollisionWeaponEnemy()
 				weapon->m_enabled = false;
 				_countPlayerWeaponFired--;
 				_score += 10;
+				_nbEnemyKilled++;
 				//break;
 				goto end;
 			}
@@ -905,12 +1135,82 @@ void Game::HandleCollisionWeaponEnemyMaster()
 
 			if (boundWeapon.intersects(boundEnemy) == true)
 			{
-				enemy->m_enabled = false;
-				weapon->m_enabled = false;
-				_countPlayerWeaponFired--;
-				_score += 100;
-				//break;
-				goto end;
+				if (enemy->m_livesMaster > 1) {
+					enemy->m_livesMaster--;
+					weapon->m_enabled = false;
+					_countPlayerWeaponFired--;
+					goto end;
+				}
+				else {
+					enemy->m_enabled = false;
+					weapon->m_enabled = false;
+					_countPlayerWeaponFired--;
+					_score += 100;
+					_nbEnemyKilled++;
+					//break;
+					goto end;
+				}
+			}
+
+		}
+	}
+
+end:
+	//nop
+	return;
+}
+
+void Game::HandleCollisionWeaponEnemyBoss() {
+
+	// Handle collision weapon enemy boss
+
+	for (std::shared_ptr<Entity> weapon : EntityManager::m_Entities)
+	{
+		if (weapon->m_enabled == false)
+		{
+			continue;
+		}
+
+		if (weapon->m_type != EntityType::weapon)
+		{
+			continue;
+		}
+
+		for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
+		{
+			if (entity->m_type != EntityType::enemyBoss)
+			{
+				continue;
+			}
+
+			if (entity->m_enabled == false)
+			{
+				continue;
+			}
+
+			sf::FloatRect boundWeapon;
+			boundWeapon = weapon->m_sprite.getGlobalBounds();
+
+			sf::FloatRect boundEnemy;
+			boundEnemy = entity->m_sprite.getGlobalBounds();
+
+			if (boundWeapon.intersects(boundEnemy) == true)
+			{
+				if (entity->m_livesBoss > 1) {
+					entity->m_livesBoss--;
+					weapon->m_enabled = false;
+					_countPlayerWeaponFired--;
+					goto end;
+				}
+				else {
+					entity->m_enabled = false;
+					weapon->m_enabled = false;
+					_countPlayerWeaponFired--;
+					_nbEnemyKilled++;
+					_score += 200;
+					//break;
+					goto end;
+				}
 			}
 		}
 	}
@@ -957,6 +1257,7 @@ void Game::HandleCollisionWeaponEnemyCanon() {
 				weapon->m_enabled = false;
 				_countPlayerWeaponFired--;
 				_score += 20;
+				_nbEnemyKilled++;
 				//break;
 				goto end;
 			}
@@ -1023,6 +1324,7 @@ void Game::HandleCollisionEnemyMasterPlayer() {
 		{
 			enemyMaster->m_enabled = false;
 			_playerLives -= 2;
+			enemyMaster->m_livesMaster--;
 			goto end;
 		}
 	}
@@ -1064,6 +1366,39 @@ end:
 	return;
 }
 
+
+void Game::HandleCollisionEnemyBossPlayer() {
+	for (std::shared_ptr<Entity> enemy : EntityManager::m_Entities)
+	{
+		if (enemy->m_enabled == false)
+		{
+			continue;
+		}
+
+		if (enemy->m_type != EntityType::enemyBoss)
+		{
+			continue;
+		}
+
+		sf::FloatRect boundEnemBoss;
+		boundEnemBoss = enemy->m_sprite.getGlobalBounds();
+
+		sf::FloatRect boundPlayer;
+		boundPlayer = EntityManager::GetPlayer()->m_sprite.getGlobalBounds();
+
+		if (boundEnemBoss.intersects(boundPlayer) == true)
+		{
+			enemy->m_enabled = false;
+			_playerLives -= 3;
+			enemy->m_livesBoss--;
+			goto end;
+		}
+	}
+
+end:
+	return;
+}
+
 void Game::HandleGameOver()
 {
 	// Game Over ?
@@ -1078,8 +1413,8 @@ void Game::HandleGameOver()
 		return false;
 	});
 
-	// enemies counts (2 squads) + enemy canon count + enemy master
-	if (count == ((ENEMIES_COUNT * 2) + CANON_COUNT + 1))
+	// enemies counts (2 squads) + enemy canon count + enemy master + enemy boss
+	if (_nbEnemyKilled == ((ENEMIES_COUNT * 2) + CANON_COUNT + 2))
 	{
 		DisplayWin();
 	}
@@ -1143,6 +1478,13 @@ void Game::DisplayWin()
 
 void Game::HandlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 {
+	if(_IsGameOver || _IsGameWon) {
+		mIsMovingUp = false;
+		mIsMovingDown = false;
+		mIsMovingLeft = false;
+		mIsMovingRight = false;
+		return;
+	}
 	if (key == sf::Keyboard::Up) {
 		mIsMovingUp = isPressed;
 	}

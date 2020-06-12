@@ -31,15 +31,22 @@ private:
 	void HandleCollisionEnemyMasterWeaponPlayer();
 	void HandleCollisionEnemyWeaponPlayer();
 	void HandleCollisionEnemyCanonWeaponPlayer();
+	void HandleCollisionWeaponEnemyBoss();
+	void HandleCollisionEnemyBossPlayer();
+	void HandleCollisionEnemyBossWeaponPlayer();
 	void HandleEnemyMasterWeaponFiring();
 	void HandleEnemyWeaponFiring();
 	void HandleEnemyCanonWeaponFiring();
+	void HandleEnemyBossWeaponFiring();
 	void HandleEnemyMasterMove();
 	void HandleEnemyMoves();
+	void HandleEnemyBossArrival();
+	void HandleEnemyBossMoves();
 	void HandleEnemyPastPlayer();
-	void HanldeEnemyMasterWeaponMoves();
+	void HandleEnemyMasterWeaponMoves();
 	void HanldeEnemyWeaponMoves();
 	void HandleEnemyCanonWeaponMove();
+	void HandleEnemyBossWeaponMove();
 	void HanldeWeaponMoves();
 	void HandleGameOver();
 	void DisplayGameOver();
@@ -58,10 +65,11 @@ private:
 	sf::Time	mStatisticsUpdateTime;
 	sf::Text	mText;
 	sf::Text	_LivesText;
-	int _playerLives = 3;
 	sf::Text	_ScoreText;
+	int _playerLives = 3;
 	int _score = 0;
 	int _countPlayerWeaponFired = 0;
+	int _nbEnemyKilled = 0;
 
 	std::size_t	mStatisticsNumFrames;
 	bool mIsMovingUp;
@@ -73,8 +81,10 @@ private:
 	bool _IsGameWon = false;
 	bool _IsEnemyWeaponFired = false;
 	bool _IsEnemyMasterWeaponFired = false;
-	bool _IsCanonWeaponFired = false;
-	bool _isMasterSummonned = false;
+	bool _IsEnemyCanonWeaponFired = false;
+	bool _IsEnemyBossWeaponFired = false;
+	bool _IsMasterSummonned = false;
+	bool _IsBossArrived = false;
 
 	sf::Texture	_TextureEnemy;
 	sf::Sprite	_EnemySquad1[ENEMIES_COUNT];
@@ -88,6 +98,8 @@ private:
 	sf::Texture	_TextureEnemyMaster;
 	sf::Sprite	_EnemyMaster;
 	sf::Texture _TextureCanonWeapon;
-	sf::Texture _TextureBackground;
+	sf::Sprite	_EnemyBoss;
+	sf::Texture	_TextureEnemyBoss;
+	sf::Texture	_TextureWeaponEnemyBoss;
 };
 
