@@ -36,6 +36,7 @@ private:
 	void HandleEnemyCanonWeaponFiring();
 	void HandleEnemyMasterMove();
 	void HandleEnemyMoves();
+	void HandleEnemyPastPlayer();
 	void HanldeEnemyMasterWeaponMoves();
 	void HanldeEnemyWeaponMoves();
 	void HandleEnemyCanonWeaponMove();
@@ -76,7 +77,8 @@ private:
 	bool _isMasterSummonned = false;
 
 	sf::Texture	_TextureEnemy;
-	sf::Sprite	_Enemy[ENEMIES_COUNT];
+	sf::Sprite	_EnemySquad1[ENEMIES_COUNT];
+	sf::Sprite	_EnemySquad2[ENEMIES_COUNT];
 	sf::Texture	_TextureCanon;
 	sf::Sprite	_Canon[CANON_COUNT];
 	sf::Texture	_TextureWeapon;

@@ -3,7 +3,7 @@
 #include "Game.h"
 #include "EntityManager.h"
 
-const float Game::PlayerSpeed = 200.f;
+const float Game::PlayerSpeed = 250.f;
 const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
 
 Game::Game()
@@ -24,8 +24,8 @@ Game::Game()
 	_TextureBackground.loadFromFile("Media/Textures/background.png");
 	_TextureWeapon.loadFromFile("Media/Textures/SI_WeaponGreen_horizontal.png");
 	_TextureWeaponEnemy.loadFromFile("Media/Textures/SI_WeaponYellow_horizontal.png");
-	_TextureWeaponEnemyMaster.loadFromFile("Media/Textures/SI_WeaponRed_horizontal.png");
-	mTexture.loadFromFile("Media/Textures/fzero_flame.png");
+	_TextureWeaponEnemyMaster.loadFromFile("Media/Textures/enemy_master_weapon.png");
+	mTexture.loadFromFile("Media/Textures/player.png");
 	_TextureEnemyMaster.loadFromFile("Media/Textures/enemy_master.png");
 	_TextureEnemy.loadFromFile("Media/Textures/enemy.png");
 	_TextureCanon.loadFromFile("Media/Textures/canon_2.png");
@@ -87,21 +87,42 @@ void Game::InitSprites()
 	EntityManager::m_Entities.push_back(sem);
 
 	//
-	// Enemies
+	// Enemies Squad 1
 	//
 
 	for (int i = 0; i < ENEMIES_COUNT; i++)
 	{
 		int r = rand() % 100;
 
-		_Enemy[i].setTexture(_TextureEnemy);
-		_Enemy[i].setPosition(600.f + 200.f * (i + 1), r);
+		_EnemySquad1[i].setTexture(_TextureEnemy);
+		_EnemySquad1[i].setPosition(600.f + 200.f * (i + 1), 100);
 
 		std::shared_ptr<Entity> se = std::make_shared<Entity>();
-		se->m_sprite = _Enemy[i];
+		se->m_sprite = _EnemySquad1[i];
 		se->m_type = EntityType::enemy;
 		se->m_size = _TextureEnemy.getSize();
-		se->m_position = _Enemy[i].getPosition();
+		se->m_position = _EnemySquad1[i].getPosition();
+		se->m_squad = 1;
+		EntityManager::m_Entities.push_back(se);
+	}
+
+	//
+	// Enemies Squad 2
+	//
+
+	for (int i = 0; i < ENEMIES_COUNT; i++)
+	{
+		int r = rand() % 100;
+
+		_EnemySquad2[i].setTexture(_TextureEnemy);
+		_EnemySquad2[i].setPosition(700.f + 200.f * (i + 1), 500);
+
+		std::shared_ptr<Entity> se = std::make_shared<Entity>();
+		se->m_sprite = _EnemySquad2[i];
+		se->m_type = EntityType::enemy;
+		se->m_size = _TextureEnemy.getSize();
+		se->m_position = _EnemySquad2[i].getPosition();
+		se->m_squad = 2;
 		EntityManager::m_Entities.push_back(se);
 	}
 
@@ -279,6 +300,7 @@ void Game::updateStatistics(sf::Time elapsedTime)
 		HanldeEnemyMasterWeaponMoves();
 		HandleEnemyCanonWeaponMove();
 		HandleEnemyMoves();
+		HandleEnemyPastPlayer();
 		HandleEnemyMasterMove();
 		HandleEnemyWeaponFiring();
 		HandleEnemyMasterWeaponFiring();
@@ -693,29 +715,73 @@ void Game::HandleEnemyMoves()
 		x = entity->m_sprite.getPosition().x;
 		y = entity->m_sprite.getPosition().y;
 		
-		if (entity->m_bTopToBottom == true)
-			y++;
-		else
-			y--;
-		x -= 0.2;
+		if (entity->m_squad == 1) {
+			if (entity->m_bTopToBottom == true)
+				y++;
+			else
+				y--;
+		}
+		else {
+			if (entity->m_bTopToBottom == true)
+				y--;
+			else
+				y++;
+		}
+		x -= 0.3;
 		entity->m_times++;
 
 		if (entity->m_times >= 400) //0)
 		{
-			if (entity->m_bTopToBottom == true)
-			{
-				entity->m_bTopToBottom = false;
-				entity->m_times = 0;
+			if (entity->m_squad == 1) {
+				if (entity->m_bTopToBottom == true)
+				{
+					entity->m_bTopToBottom = false;
+					entity->m_times = 0;
+				}
+				else
+				{
+					entity->m_bTopToBottom = true;
+					entity->m_times = 0;
+					y += 1;
+				}
 			}
-			else
-			{
-				entity->m_bTopToBottom = true;
-				entity->m_times = 0;
-				y += 1;
+			else {
+				if (entity->m_bTopToBottom == false)
+				{
+					entity->m_bTopToBottom = true;
+					entity->m_times = 0;
+				}
+				else
+				{
+					entity->m_bTopToBottom = false;
+					entity->m_times = 0;
+					y -= 1;
+				}
 			}
 		}
 
 		entity->m_sprite.setPosition(x, y);
+	}
+}
+
+void Game::HandleEnemyPastPlayer() {
+	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
+	{
+		if (entity->m_enabled == false)
+		{
+			continue;
+		}
+
+		if (entity->m_type != EntityType::enemy)
+		{
+			continue;
+		}
+
+		// Enemy width sprite is 63px
+		if (entity->m_sprite.getPosition().x <= -63) {
+			entity->m_enabled = false;
+			_playerLives--;
+		}
 	}
 }
 
@@ -1012,8 +1078,8 @@ void Game::HandleGameOver()
 		return false;
 	});
 
-	// enemies counts + enemy canon count + enemy master
-	if (count == (ENEMIES_COUNT + CANON_COUNT + 1))
+	// enemies counts (2 squads) + enemy canon count + enemy master
+	if (count == ((ENEMIES_COUNT * 2) + CANON_COUNT + 1))
 	{
 		DisplayWin();
 	}

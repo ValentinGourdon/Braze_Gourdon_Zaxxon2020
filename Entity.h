@@ -28,5 +28,6 @@ public:
 	// Enemy only
 	bool m_bTopToBottom = true;
 	int m_times = 0;
+	int m_squad;
 };
 
