@@ -21,6 +21,8 @@ Game::Game()
 {
 	mWindow.setFramerateLimit(160);
 
+	// Textures 
+
 	_TextureBackground.loadFromFile("Media/Textures/background.png");
 	_TextureWeapon.loadFromFile("Media/Textures/SI_WeaponGreen_horizontal.png");
 	_TextureWeaponEnemy.loadFromFile("Media/Textures/SI_WeaponYellow_horizontal.png");
@@ -33,6 +35,28 @@ Game::Game()
 	_TextureEnemyBoss.loadFromFile("Media/Textures/enemy_boss.png");
 	_TextureWeaponEnemyBoss.loadFromFile("Media/Textures/enemy_boss_weapon.png");
 	mFont.loadFromFile("Media/Sansation.ttf");
+
+	// Sounds
+
+	_BufferWeaponShoot.loadFromFile("Media/Sounds/player-shoot.wav");
+	_SoundWeaponShoot.setBuffer(_BufferWeaponShoot);
+	_BufferEnemyWeaponShoot.loadFromFile("Media/Sounds/enemy-shoot.wav");
+	_SoundEnemyWeaponShoot.setBuffer(_BufferEnemyWeaponShoot);
+	_BufferEnemyMasterWeaponShoot.loadFromFile("Media/Sounds/enemy-master-shoot.wav");
+	_SoundEnemyMasterWeaponShoot.setBuffer(_BufferEnemyMasterWeaponShoot);
+	_BufferEnemyCanonWeaponShoot.loadFromFile("Media/Sounds/enemy-canon-shoot.wav");
+	_SoundEnemyCanonWeaponShoot.setBuffer(_BufferEnemyCanonWeaponShoot);
+	_BufferEnemyBossWeaponShoot.loadFromFile("Media/Sounds/enemy-boss-shoot.wav");
+	_SoundEnemyBossWeaponShoot.setBuffer(_BufferEnemyBossWeaponShoot);
+	_BufferGameOver.loadFromFile("Media/Sounds/you-loose.wav");
+	_SoundGameOver.setBuffer(_BufferGameOver);
+	_BufferCongratulation.loadFromFile("Media/Sounds/congratulation.wav");
+	_SoundCongratulation.setBuffer(_BufferCongratulation);
+	_BufferNextTime.loadFromFile("Media/Sounds/next-time.wav");
+	_SoundNextTime.setBuffer(_BufferNextTime);
+	_SoundBackgroundMusic.openFromFile("Media/Sounds/Mute_City_F-Zero_X.wav");
+	_SoundBackgroundMusic.play();
+
 
 	InitSprites();
 }
@@ -575,7 +599,7 @@ void Game::HandleEnemyMasterWeaponFiring()
 	EntityManager::m_Entities.push_back(sw);
 
 	_IsEnemyMasterWeaponFired = true;
-	PlaySound(TEXT("Media/Sounds/laser-shot-master.wav"), NULL, SND_ASYNC);
+	_SoundEnemyMasterWeaponShoot.play();
 }
 
 
@@ -608,7 +632,7 @@ void Game::HandleEnemyBossWeaponFiring() {
 	sw->m_size = _TextureWeaponEnemyBoss.getSize();
 	EntityManager::m_Entities.push_back(sw);
 
-	PlaySound(TEXT("Media/Sounds/laser-shot-boss.wav"), NULL, SND_ASYNC);
+	_SoundEnemyBossWeaponShoot.play();
 }
 
 
@@ -687,7 +711,7 @@ void Game::HandleEnemyWeaponFiring()
 		EntityManager::m_Entities.push_back(sw);
 
 		_IsEnemyWeaponFired = true;
-		PlaySound(TEXT("Media/Sounds/laser-shot-enemy.wav"), NULL, SND_ASYNC);
+		_SoundEnemyWeaponShoot.play();
 		break;
 	}
 }
@@ -736,7 +760,7 @@ void Game::HandleEnemyCanonWeaponFiring() {
 		EntityManager::m_Entities.push_back(sw);
 
 		_IsEnemyCanonWeaponFired = true;
-		PlaySound(TEXT("Media/Sounds/Canon.wav"), NULL, SND_ASYNC);
+		_SoundEnemyCanonWeaponShoot.play();
 		break;
 	}
 }
@@ -1589,7 +1613,8 @@ void Game::DisplayGameOver()
 		mText.setString("GAME OVER");
 
 		_IsGameOver = true;
-		PlaySound(TEXT("Media/Sounds/you-lose.wav"), NULL, SND_ASYNC);
+		_SoundBackgroundMusic.setVolume(20);
+		_SoundGameOver.play();
 	}
 	else
 	{
@@ -1610,10 +1635,12 @@ void Game::DisplayWin()
 
 		_IsGameWon = true;
 		if (_playerLives == 3) {
-			PlaySound(TEXT("Media/Sounds/nexttime.wav"), NULL, SND_ASYNC);
+			_SoundBackgroundMusic.setVolume(20);
+			_SoundNextTime.play();
 		}
 		else {
-			PlaySound(TEXT("Media/Sounds/congratulation.wav"), NULL, SND_ASYNC);
+			_SoundBackgroundMusic.setVolume(20);
+			_SoundCongratulation.play();
 		}
 
 	}
@@ -1657,8 +1684,7 @@ void Game::HandlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 			return;
 		}
 
-		PlaySound(TEXT("Media/Sounds/laser-shot-player.wav"), NULL, SND_FILENAME | SND_ASYNC);
-
+		_SoundWeaponShoot.play();
 		std::shared_ptr<Entity> sw = std::make_shared<Entity>();
 		sw->m_sprite.setTexture(_TextureWeapon);
 		sw->m_sprite.setPosition(

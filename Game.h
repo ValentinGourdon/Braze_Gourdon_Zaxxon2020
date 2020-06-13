@@ -109,5 +109,24 @@ private:
 	sf::Texture	_TextureWeaponEnemyBoss;
 	sf::Sprite	_Background;
 	sf::Texture	_TextureBackground;
+
+	sf::SoundBuffer _BufferWeaponShoot;
+	sf::Sound _SoundWeaponShoot;
+	sf::SoundBuffer _BufferEnemyWeaponShoot;
+	sf::Sound _SoundEnemyWeaponShoot;
+	sf::SoundBuffer _BufferEnemyMasterWeaponShoot;
+	sf::Sound _SoundEnemyMasterWeaponShoot;
+	sf::SoundBuffer _BufferEnemyCanonWeaponShoot;
+	sf::Sound _SoundEnemyCanonWeaponShoot;
+	sf::SoundBuffer _BufferEnemyBossWeaponShoot;
+	sf::Sound _SoundEnemyBossWeaponShoot;
+	sf::SoundBuffer _BufferGameOver;
+	sf::Sound _SoundGameOver;
+	sf::SoundBuffer _BufferCongratulation;
+	sf::Sound _SoundCongratulation;
+	sf::SoundBuffer _BufferNextTime;
+	sf::Sound _SoundNextTime;
+
+	sf::Music _SoundBackgroundMusic;
 };
 
