@@ -12,5 +12,6 @@ public:
 	static std::shared_ptr<Entity> GetPlayer();
 	static std::shared_ptr<Entity> GetEnemyMaster();
 	static std::shared_ptr<Entity> GetEnemyBoss();
+	static std::shared_ptr<Entity> GetEnemyCanon();
 };
 

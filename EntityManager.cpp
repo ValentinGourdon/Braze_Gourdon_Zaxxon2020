@@ -55,3 +55,16 @@ std::shared_ptr<Entity> EntityManager::GetEnemyBoss()
 
 	return nullptr;
 }
+
+std::shared_ptr<Entity> EntityManager::GetEnemyCanon()
+{
+	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
+	{
+		if (entity->m_type == EntityType::enemyCanon)
+		{
+			return entity;
+		}
+	}
+
+	return nullptr;
+}

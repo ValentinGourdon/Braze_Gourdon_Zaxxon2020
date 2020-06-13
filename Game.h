@@ -2,7 +2,7 @@
 #include "Weapon.h"
 
 #define ENEMIES_COUNT 5
-#define CANON_COUNT 1
+#define CANON_COUNT 2
 #define MAX_WEAPON_FIRE 3
 
 class Game
@@ -42,6 +42,7 @@ private:
 	void HandleEnemyMoves();
 	void HandleEnemyBossArrival();
 	void HandleEnemyBossMoves();
+	void HandleEnemyCanonArrival();
 	void HandleEnemyPastPlayer();
 	void HandleEnemyMasterWeaponMoves();
 	void HanldeEnemyWeaponMoves();
@@ -70,6 +71,7 @@ private:
 	int _score = 0;
 	int _countPlayerWeaponFired = 0;
 	int _nbEnemyKilled = 0;
+	int _canonKilled = 0;
 
 	std::size_t	mStatisticsNumFrames;
 	bool mIsMovingUp;
@@ -85,12 +87,14 @@ private:
 	bool _IsEnemyBossWeaponFired = false;
 	bool _IsMasterSummonned = false;
 	bool _IsBossArrived = false;
+	bool _IsCanonOnScreen = false;
+	//bool _WeaponBoss = true;
 
 	sf::Texture	_TextureEnemy;
 	sf::Sprite	_EnemySquad1[ENEMIES_COUNT];
 	sf::Sprite	_EnemySquad2[ENEMIES_COUNT];
 	sf::Texture	_TextureCanon;
-	sf::Sprite	_Canon[CANON_COUNT];
+	sf::Sprite	_EnemyCanon;
 	sf::Texture	_TextureWeapon;
 	sf::Texture	_TextureWeaponEnemy;
 	sf::Texture	_TextureWeaponEnemyMaster;
