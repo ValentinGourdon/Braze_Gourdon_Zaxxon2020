@@ -2,12 +2,15 @@
 #include "StringHelpers.h"
 #include "Game.h"
 #include "EntityManager.h"
+#include <iostream>
 
 const float Game::PlayerSpeed = 250.f;
 const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
+const int windowHeight = 600;
+const int windowWidth = 840;
 
 Game::Game()
-	: mWindow(sf::VideoMode(840, 600), "Zaxxon 2020", sf::Style::Close)
+	: mWindow(sf::VideoMode(windowWidth, windowHeight), "Zaxxon 2020", sf::Style::Close)
 	, mTexture()
 	, mPlayer()
 	, mFont()
@@ -264,15 +267,41 @@ void Game::processEvents()
 void Game::update(sf::Time elapsedTime)
 {
 	sf::Vector2f movement(0.f, 0.f);
-	if (mIsMovingUp)
-		movement.y -= PlayerSpeed;
-	if (mIsMovingDown)
-		movement.y += PlayerSpeed;
-	if (mIsMovingLeft)
-		movement.x -= PlayerSpeed;
-	if (mIsMovingRight)
-		movement.x += PlayerSpeed;
-
+	sf::Vector2f playerCurrentPos = EntityManager::GetPlayer()->m_sprite.getPosition();
+	sf::Vector2u playerSize = EntityManager::GetPlayer()->m_size;
+	if (mIsMovingUp) {
+		if (playerCurrentPos.y - 1.f < 0) {
+			movement.y = movement.y;
+		}
+		else {
+			movement.y -= PlayerSpeed;
+		}
+	}
+	if (mIsMovingDown) {
+		if (playerCurrentPos.y + playerSize.y + 1.f > windowHeight) {
+			movement.y = movement.y;
+		}
+		else {
+			movement.y += PlayerSpeed;
+		}
+	}
+	if (mIsMovingLeft) {
+		if (playerCurrentPos.x - 1.f < 0) {
+			movement.x = movement.x;
+		}
+		else {
+			movement.x -= PlayerSpeed;
+		}
+	}
+	if (mIsMovingRight) {
+		if (playerCurrentPos.x + playerSize.x + 1.f > windowWidth) {
+			movement.x = movement.x;
+		}
+		else {
+			movement.x += PlayerSpeed;
+		}
+	}
+		
 	for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
 	{
 		if (entity->m_enabled == false)
@@ -1660,6 +1689,7 @@ void Game::HandlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 		return;
 	}
 	if (key == sf::Keyboard::Up) {
+		
 		mIsMovingUp = isPressed;
 	}
 	else if (key == sf::Keyboard::Down) {
