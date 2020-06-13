@@ -27,7 +27,7 @@ Game::Game()
 	// Textures 
 
 	_TextureBackground.loadFromFile("Media/Textures/background.png");
-	_TextureWeapon.loadFromFile("Media/Textures/SI_WeaponGreen_horizontal.png");
+	_TextureWeapon.loadFromFile("Media/Textures/player-weapon2.png");
 	_TextureWeaponEnemy.loadFromFile("Media/Textures/SI_WeaponYellow_horizontal.png");
 	_TextureWeaponEnemyMaster.loadFromFile("Media/Textures/enemy_master_weapon.png");
 	mTexture.loadFromFile("Media/Textures/player.png");
@@ -37,7 +37,7 @@ Game::Game()
 	_TextureCanonWeapon.loadFromFile("Media/Textures/canon_bullet.png");
 	_TextureEnemyBoss.loadFromFile("Media/Textures/enemy_boss.png");
 	_TextureWeaponEnemyBoss.loadFromFile("Media/Textures/enemy_boss_weapon.png");
-	mFont.loadFromFile("Media/Sansation.ttf");
+
 
 	// Sounds
 
@@ -59,6 +59,10 @@ Game::Game()
 	_SoundNextTime.setBuffer(_BufferNextTime);
 	_SoundBackgroundMusic.openFromFile("Media/Sounds/Mute_City_F-Zero_X.wav");
 	_SoundBackgroundMusic.play();
+
+	// Font
+
+	mFont.loadFromFile("Media/Sansation.ttf");
 
 
 	InitSprites();
@@ -685,7 +689,7 @@ void Game::HandleEnemyBossWeaponMove() {
 		x -= 4;
 
 
-		if (x <= 0 || y <= 0 || y >= 840)
+		if (x <= 0 || y <= 0 || y >= windowWidth)
 		{
 			entity->m_enabled = false;
 		}
@@ -711,7 +715,7 @@ void Game::HandleEnemyWeaponFiring()
 			continue;
 		}
 
-		if (entity->m_sprite.getPosition().x >= 840) {
+		if (entity->m_sprite.getPosition().x >= windowWidth) {
 			continue;
 		}
 
@@ -1168,7 +1172,7 @@ void Game::HanldeWeaponMoves()
 		y = entity->m_sprite.getPosition().y;
 		x += 3.5;
 
-		if (x >= 840)
+		if (x >= windowWidth)
 		{
 			entity->m_enabled = false;
 			_countPlayerWeaponFired--;
@@ -1689,7 +1693,6 @@ void Game::HandlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 		return;
 	}
 	if (key == sf::Keyboard::Up) {
-		
 		mIsMovingUp = isPressed;
 	}
 	else if (key == sf::Keyboard::Down) {
@@ -1719,7 +1722,7 @@ void Game::HandlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 		sw->m_sprite.setTexture(_TextureWeapon);
 		sw->m_sprite.setPosition(
 			EntityManager::GetPlayer()->m_sprite.getPosition().x + 45,
-			EntityManager::GetPlayer()->m_sprite.getPosition().y + 20);
+			EntityManager::GetPlayer()->m_sprite.getPosition().y + 15);
 		sw->m_type = EntityType::weapon;
 		sw->m_size = _TextureWeapon.getSize();
 		EntityManager::m_Entities.push_back(sw);
