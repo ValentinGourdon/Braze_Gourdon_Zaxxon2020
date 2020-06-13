@@ -21,6 +21,7 @@ Game::Game()
 {
 	mWindow.setFramerateLimit(160);
 
+	_TextureBackground.loadFromFile("Media/Textures/background.png");
 	_TextureWeapon.loadFromFile("Media/Textures/SI_WeaponGreen_horizontal.png");
 	_TextureWeaponEnemy.loadFromFile("Media/Textures/SI_WeaponYellow_horizontal.png");
 	_TextureWeaponEnemyMaster.loadFromFile("Media/Textures/enemy_master_weapon.png");
@@ -59,6 +60,19 @@ void Game::InitSprites()
 	_IsEnemyWeaponFired = false;
 	_countPlayerWeaponFired = 0;
 	_IsEnemyMasterWeaponFired = false;
+
+	//
+	// Backgournd
+	//
+	_Background.setTexture(_TextureBackground);
+	_Background.setPosition(0.f, 0.f);	
+	std::shared_ptr<Entity> seba = std::make_shared<Entity>();
+	seba->m_sprite = _Background;
+	seba->m_type = EntityType::background;
+	seba->m_size = _TextureBackground.getSize();
+	seba->m_position = _Background.getPosition();
+	seba->m_enabled = true;
+	EntityManager::m_Entities.push_back(seba);
 
 	//
 	// Player

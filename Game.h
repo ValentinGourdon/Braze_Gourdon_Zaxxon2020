@@ -107,5 +107,7 @@ private:
 	sf::Sprite	_EnemyBoss;
 	sf::Texture	_TextureEnemyBoss;
 	sf::Texture	_TextureWeaponEnemyBoss;
+	sf::Sprite	_Background;
+	sf::Texture	_TextureBackground;
 };
 

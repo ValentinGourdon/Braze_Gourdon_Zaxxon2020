@@ -2,6 +2,7 @@
 
 enum EntityType
 {
+	background,
 	player,
 	weapon,
 	enemy,
