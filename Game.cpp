@@ -325,6 +325,7 @@ void Game::updateStatistics(sf::Time elapsedTime)
 		HandleCollisionWeaponEnemyMaster();
 		HandleCollisionWeaponEnemyCanon();
 		HandleCollisionWeaponEnemyBoss();
+		HandleCollisionWeaponEnemyCanonWeapon();
 	}
 }
 
@@ -739,11 +740,18 @@ void Game::HandleEnemyCanonWeaponMove() {
 			continue;
 		}
 
-		float x, y;
+		float x, y, xPlayer, yPlayer;
 		x = entity->m_sprite.getPosition().x;
 		y = entity->m_sprite.getPosition().y;
+		xPlayer = EntityManager::GetPlayer()->m_sprite.getPosition().x;
+		yPlayer = EntityManager::GetPlayer()->m_sprite.getPosition().y;
+
 		x -= 3.0f;
-		y -= static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 1.5f));
+		if(x < xPlayer)
+			y -= static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 1.5f));
+		else {
+			y = SelfGuidedShoot(y, yPlayer + 5);
+		}
 
 		if (x <= 0 || y <= 0)
 		{
@@ -755,6 +763,26 @@ void Game::HandleEnemyCanonWeaponMove() {
 			entity->m_sprite.setPosition(x, y);
 		}
 	}
+}
+
+float Game::SelfGuidedShoot(float yShoot, float yPlayer) {
+	float ret = yShoot;
+	if (yShoot > yPlayer) {
+		ret = yShoot - yPlayer;
+		if (ret > 3.f)
+			ret = yShoot - 3.f;
+		else
+			ret = yShoot;
+	}
+	else if (yShoot < yPlayer) {
+		ret = yShoot + yPlayer;
+		if (ret > 3.f)
+			ret = yShoot + 3.f;
+		else
+			ret = yShoot;
+	}
+
+	return ret;
 }
 
 void Game::HandleEnemyMasterMove()
@@ -957,7 +985,7 @@ void Game::HandleEnemyMoves()
 			else
 				y++;
 		}
-		x -= 0.3;
+		x -= 0.3f;
 		entity->m_times++;
 
 		if (entity->m_times >= 400) //0)
@@ -1297,6 +1325,54 @@ void Game::HandleCollisionWeaponEnemyCanon() {
 				_nbEnemyKilled++;
 				_canonKilled++;
 				_IsCanonOnScreen = false;
+				//break;
+				goto end;
+			}
+		}
+	}
+
+end:
+	//nop
+	return;
+}
+
+void Game::HandleCollisionWeaponEnemyCanonWeapon() {
+	for (std::shared_ptr<Entity> weapon : EntityManager::m_Entities)
+	{
+		if (weapon->m_enabled == false)
+		{
+			continue;
+		}
+
+		if (weapon->m_type != EntityType::weapon)
+		{
+			continue;
+		}
+
+		for (std::shared_ptr<Entity> entity : EntityManager::m_Entities)
+		{
+			if (entity->m_type != EntityType::enemyCanonWeapon)
+			{
+				continue;
+			}
+
+			if (entity->m_enabled == false)
+			{
+				continue;
+			}
+
+			sf::FloatRect boundWeapon;
+			boundWeapon = weapon->m_sprite.getGlobalBounds();
+
+			sf::FloatRect boundEnemyWeapon;
+			boundEnemyWeapon = entity->m_sprite.getGlobalBounds();
+
+			if (boundWeapon.intersects(boundEnemyWeapon) == true)
+			{
+				entity->m_enabled = false;
+				weapon->m_enabled = false;
+				_IsEnemyCanonWeaponFired = false;
+				_countPlayerWeaponFired--;
 				//break;
 				goto end;
 			}

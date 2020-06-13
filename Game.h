@@ -25,13 +25,14 @@ private:
 	void HandleCollisionWeaponEnemy();
 	void HandleCollisionWeaponEnemyMaster();
 	void HandleCollisionWeaponEnemyCanon();
+	void HandleCollisionWeaponEnemyBoss();
+	void HandleCollisionWeaponEnemyCanonWeapon();
 	void HandleCollisionEnemyPlayer();
 	void HandleCollisionEnemyMasterPlayer();
 	void HandleCollisionEnemyCanonPlayer();
 	void HandleCollisionEnemyMasterWeaponPlayer();
 	void HandleCollisionEnemyWeaponPlayer();
 	void HandleCollisionEnemyCanonWeaponPlayer();
-	void HandleCollisionWeaponEnemyBoss();
 	void HandleCollisionEnemyBossPlayer();
 	void HandleCollisionEnemyBossWeaponPlayer();
 	void HandleEnemyMasterWeaponFiring();
@@ -53,6 +54,7 @@ private:
 	void DisplayGameOver();
 	void DisplayWin();
 	void HandlePlayerInput(sf::Keyboard::Key key, bool isPressed);
+	float SelfGuidedShoot(float y, float yPlayer);
 
 private:
 	static const float		PlayerSpeed;
