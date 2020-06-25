@@ -53,12 +53,9 @@ Game::Game()
 	_SoundEnemyBossWeaponShoot.setBuffer(_BufferEnemyBossWeaponShoot);
 	_BufferGameOver.loadFromFile("Media/Sounds/you-loose.wav");
 	_SoundGameOver.setBuffer(_BufferGameOver);
-	_BufferCongratulation.loadFromFile("Media/Sounds/congratulation.wav");
-	_SoundCongratulation.setBuffer(_BufferCongratulation);
-	_BufferNextTime.loadFromFile("Media/Sounds/next-time.wav");
-	_SoundNextTime.setBuffer(_BufferNextTime);
 	_SoundBackgroundMusic.openFromFile("Media/Sounds/Mute_City_F-Zero_X.wav");
 	_SoundBackgroundMusic.play();
+	_SoundWonBackgroundMusic.openFromFile("Media/Sounds/won-music.wav");
 
 	// Font
 
@@ -1657,8 +1654,11 @@ void Game::DisplayGameOver()
 
 void Game::DisplayWin()
 {
+
 	if (_playerLives != 0)
 	{
+		_SoundBackgroundMusic.stop();
+		_SoundWonBackgroundMusic.play();
 		mText.setFillColor(sf::Color::Green);
 		mText.setFont(mFont);
 		mText.setPosition(200.f, 200.f);
@@ -1667,14 +1667,6 @@ void Game::DisplayWin()
 		mText.setString("YOU WON !!!");
 
 		_IsGameWon = true;
-		if (_playerLives == 3) {
-			_SoundBackgroundMusic.setVolume(20);
-			_SoundNextTime.play();
-		}
-		else {
-			_SoundBackgroundMusic.setVolume(20);
-			_SoundCongratulation.play();
-		}
 
 	}
 	else

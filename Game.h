@@ -122,11 +122,7 @@ private:
 	sf::Sound _SoundEnemyBossWeaponShoot;
 	sf::SoundBuffer _BufferGameOver;
 	sf::Sound _SoundGameOver;
-	sf::SoundBuffer _BufferCongratulation;
-	sf::Sound _SoundCongratulation;
-	sf::SoundBuffer _BufferNextTime;
-	sf::Sound _SoundNextTime;
-
 	sf::Music _SoundBackgroundMusic;
+	sf::Music _SoundWonBackgroundMusic;
 };
 
