@@ -34,7 +34,7 @@ Game::Game()
 	_TextureEnemyMaster.loadFromFile("Media/Textures/enemy_master.png");
 	_TextureEnemy.loadFromFile("Media/Textures/enemy.png");
 	_TextureCanon.loadFromFile("Media/Textures/canon_2.png");
-	_TextureCanonWeapon.loadFromFile("Media/Textures/canon_bullet.png");
+	_TextureCanonWeapon.loadFromFile("Media/Textures/canon_bullet2.png");
 	_TextureEnemyBoss.loadFromFile("Media/Textures/enemy_boss.png");
 	_TextureWeaponEnemyBoss.loadFromFile("Media/Textures/enemy_boss_weapon.png");
 
