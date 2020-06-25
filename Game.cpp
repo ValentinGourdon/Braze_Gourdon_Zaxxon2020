@@ -27,7 +27,7 @@ Game::Game()
 	// Textures 
 
 	_TextureBackground.loadFromFile("Media/Textures/background.png");
-	_TextureWeapon.loadFromFile("Media/Textures/player-weapon2.png");
+	_TextureWeapon.loadFromFile("Media/Textures/player-weapon.png");
 	_TextureWeaponEnemy.loadFromFile("Media/Textures/SI_WeaponYellow_horizontal.png");
 	_TextureWeaponEnemyMaster.loadFromFile("Media/Textures/enemy_master_weapon.png");
 	mTexture.loadFromFile("Media/Textures/player.png");
