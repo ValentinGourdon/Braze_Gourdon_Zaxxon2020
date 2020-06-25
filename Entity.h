@@ -2,6 +2,7 @@
 
 enum EntityType
 {
+	background,
 	player,
 	weapon,
 	enemy,
@@ -9,7 +10,9 @@ enum EntityType
 	enemyMaster,
 	enemyMasterWeapon,
 	enemyCanon,
-	enemyCanonWeapon
+	enemyCanonWeapon,
+	enemyBoss,
+	enemyBossWeapon
 };
 
 class Entity
@@ -28,5 +31,14 @@ public:
 	// Enemy only
 	bool m_bTopToBottom = true;
 	int m_times = 0;
+	int m_squad = 1;
+	// Master only
+	int m_livesMaster = 3;
+	// Boss only
+	bool m_TopToLeft = false;
+	bool m_BottomToRight = false;
+	bool m_LeftToBottom = false;
+	bool m_RightToTop = true;
+	int m_livesBoss = 5;
 };
 

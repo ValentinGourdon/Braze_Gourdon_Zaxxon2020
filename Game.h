@@ -2,7 +2,7 @@
 #include "Weapon.h"
 
 #define ENEMIES_COUNT 5
-#define CANON_COUNT 1
+#define CANON_COUNT 2
 #define MAX_WEAPON_FIRE 3
 
 class Game
@@ -25,25 +25,36 @@ private:
 	void HandleCollisionWeaponEnemy();
 	void HandleCollisionWeaponEnemyMaster();
 	void HandleCollisionWeaponEnemyCanon();
+	void HandleCollisionWeaponEnemyBoss();
+	void HandleCollisionWeaponEnemyCanonWeapon();
 	void HandleCollisionEnemyPlayer();
 	void HandleCollisionEnemyMasterPlayer();
 	void HandleCollisionEnemyCanonPlayer();
 	void HandleCollisionEnemyMasterWeaponPlayer();
 	void HandleCollisionEnemyWeaponPlayer();
 	void HandleCollisionEnemyCanonWeaponPlayer();
+	void HandleCollisionEnemyBossPlayer();
+	void HandleCollisionEnemyBossWeaponPlayer();
 	void HandleEnemyMasterWeaponFiring();
 	void HandleEnemyWeaponFiring();
 	void HandleEnemyCanonWeaponFiring();
+	void HandleEnemyBossWeaponFiring();
 	void HandleEnemyMasterMove();
 	void HandleEnemyMoves();
-	void HanldeEnemyMasterWeaponMoves();
+	void HandleEnemyBossArrival();
+	void HandleEnemyBossMoves();
+	void HandleEnemyCanonArrival();
+	void HandleEnemyPastPlayer();
+	void HandleEnemyMasterWeaponMoves();
 	void HanldeEnemyWeaponMoves();
 	void HandleEnemyCanonWeaponMove();
+	void HandleEnemyBossWeaponMove();
 	void HanldeWeaponMoves();
 	void HandleGameOver();
 	void DisplayGameOver();
 	void DisplayWin();
 	void HandlePlayerInput(sf::Keyboard::Key key, bool isPressed);
+	float SelfGuidedShoot(float y, float yPlayer);
 
 private:
 	static const float		PlayerSpeed;
@@ -57,10 +68,12 @@ private:
 	sf::Time	mStatisticsUpdateTime;
 	sf::Text	mText;
 	sf::Text	_LivesText;
-	int _playerLives = 3;
 	sf::Text	_ScoreText;
+	int _playerLives = 3;
 	int _score = 0;
 	int _countPlayerWeaponFired = 0;
+	int _nbEnemyKilled = 0;
+	int _canonKilled = 0;
 
 	std::size_t	mStatisticsNumFrames;
 	bool mIsMovingUp;
@@ -72,13 +85,18 @@ private:
 	bool _IsGameWon = false;
 	bool _IsEnemyWeaponFired = false;
 	bool _IsEnemyMasterWeaponFired = false;
-	bool _IsCanonWeaponFired = false;
-	bool _isMasterSummonned = false;
+	bool _IsEnemyCanonWeaponFired = false;
+	bool _IsEnemyBossWeaponFired = false;
+	bool _IsMasterSummonned = false;
+	bool _IsBossArrived = false;
+	bool _IsCanonOnScreen = false;
+	//bool _WeaponBoss = true;
 
 	sf::Texture	_TextureEnemy;
-	sf::Sprite	_Enemy[ENEMIES_COUNT];
+	sf::Sprite	_EnemySquad1[ENEMIES_COUNT];
+	sf::Sprite	_EnemySquad2[ENEMIES_COUNT];
 	sf::Texture	_TextureCanon;
-	sf::Sprite	_Canon[CANON_COUNT];
+	sf::Sprite	_EnemyCanon;
 	sf::Texture	_TextureWeapon;
 	sf::Texture	_TextureWeaponEnemy;
 	sf::Texture	_TextureWeaponEnemyMaster;
@@ -86,6 +104,29 @@ private:
 	sf::Texture	_TextureEnemyMaster;
 	sf::Sprite	_EnemyMaster;
 	sf::Texture _TextureCanonWeapon;
-	sf::Texture _TextureBackground;
+	sf::Sprite	_EnemyBoss;
+	sf::Texture	_TextureEnemyBoss;
+	sf::Texture	_TextureWeaponEnemyBoss;
+	sf::Sprite	_Background;
+	sf::Texture	_TextureBackground;
+
+	sf::SoundBuffer _BufferWeaponShoot;
+	sf::Sound _SoundWeaponShoot;
+	sf::SoundBuffer _BufferEnemyWeaponShoot;
+	sf::Sound _SoundEnemyWeaponShoot;
+	sf::SoundBuffer _BufferEnemyMasterWeaponShoot;
+	sf::Sound _SoundEnemyMasterWeaponShoot;
+	sf::SoundBuffer _BufferEnemyCanonWeaponShoot;
+	sf::Sound _SoundEnemyCanonWeaponShoot;
+	sf::SoundBuffer _BufferEnemyBossWeaponShoot;
+	sf::Sound _SoundEnemyBossWeaponShoot;
+	sf::SoundBuffer _BufferGameOver;
+	sf::Sound _SoundGameOver;
+	sf::SoundBuffer _BufferCongratulation;
+	sf::Sound _SoundCongratulation;
+	sf::SoundBuffer _BufferNextTime;
+	sf::Sound _SoundNextTime;
+
+	sf::Music _SoundBackgroundMusic;
 };
 
